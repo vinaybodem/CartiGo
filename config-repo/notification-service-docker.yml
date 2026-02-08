@@ -1,0 +1,17 @@
+server:
+  port: 9011
+
+spring:
+  application:
+    name: notification-service
+  datasource:
+    url: jdbc:mysql://mysql:3306/cartigo_notify?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+

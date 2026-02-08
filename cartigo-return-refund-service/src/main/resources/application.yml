@@ -1,0 +1,36 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: cartigo-return-refund-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/cartigo_return_refund_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: Vinay@123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+app:
+  security:
+    permit-all: true
+
+order:
+  service:
+    enabled: true
+    name: cartigo-order-service
+    fail-open: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

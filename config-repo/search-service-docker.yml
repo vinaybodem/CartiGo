@@ -1,0 +1,17 @@
+server:
+  port: 9013
+
+spring:
+  application:
+    name: search-service
+  datasource:
+    url: jdbc:mysql://mysql:3306/cartigo_search?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+spring:\n  elasticsearch:\n    uris: http://opensearch:9200

@@ -1,0 +1,17 @@
+server:
+  port: 9006
+
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: jdbc:mysql://mysql:3306/cartigo_payment?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+razorpay:\n  keyId: "${RAZORPAY_KEY_ID:}"\n  keySecret: "${RAZORPAY_KEY_SECRET:}"\n  webhookSecret: "${RAZORPAY_WEBHOOK_SECRET:}"

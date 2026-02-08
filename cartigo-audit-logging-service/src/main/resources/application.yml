@@ -1,0 +1,35 @@
+server:
+  port: 8093
+
+spring:
+  application:
+    name: cartigo-audit-logging-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  datasource:
+    url: jdbc:mysql://localhost:3306/cartigo_audit_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+app:
+  security:
+    permit-all: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

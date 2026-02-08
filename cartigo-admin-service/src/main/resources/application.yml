@@ -1,0 +1,44 @@
+server:
+  port: 8092
+
+spring:
+  application:
+    name: cartigo-admin-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+app:
+  security:
+    permit-all: true
+
+# Optional: make service names configurable
+audit:
+  service:
+    name: cartigo-audit-logging-service
+order:
+  service:
+    name: cartigo-order-service
+product:
+  service:
+    name: cartigo-product-service
+user:
+  service:
+    name: cartigo-user-service
+returns:
+  service:
+    name: cartigo-return-refund-service
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
