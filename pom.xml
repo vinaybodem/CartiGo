@@ -50,7 +50,7 @@
 		<!-- Optional advanced: not needed for simple ecommerce -->
 		<!-- <module>cartigo-admin-service</module> -->
 		<module>cartigo-reporting-analytics-service</module>
-		<!-- <module>cartigo-notification-service</module> -->
+		 <module>cartigo-notification-service</module>
 		<!-- <module>cartigo-audit-logging-service</module> -->
 	</modules>
 
