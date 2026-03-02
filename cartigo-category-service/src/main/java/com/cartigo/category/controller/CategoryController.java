@@ -41,9 +41,9 @@ public class CategoryController {
         categoryService.deleteCategory(category_name);
         return new ResponseEntity<>(ApiResponse.ok("Deleted", null),HttpStatus.NO_CONTENT);
     }
-    @GetMapping("validate/{category_name}")
-    public boolean validateCategory(@PathVariable String category_name) {
-        return categoryService.isValidCategory(category_name);
+    @GetMapping("validate/{category_id}")
+    public boolean validateCategory(@PathVariable Long category_id) {
+        return categoryService.isValidCategory(category_id);
     }
     @GetMapping("get")
     public ResponseEntity<ApiResponse<List<Category>>>  searchByCategoryName(@RequestParam String keyword){
