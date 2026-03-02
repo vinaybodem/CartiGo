@@ -21,7 +21,7 @@ public interface ProductService {
 
     List<Product> getProductsBySeller(Long sellerId);
 
-    List<Product> getProductsByCategoryId(Long categoryId);
+    List<Product> getProductsByCategoryId(String categoryName);
 
     List<Product> listByBrand(String brand);
 

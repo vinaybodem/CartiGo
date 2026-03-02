@@ -4,7 +4,9 @@ import com.cartigo.product.dto.ProductImageResponse;
 import com.cartigo.product.common.ApiResponse;
 import com.cartigo.product.entity.ProductImage;
 import com.cartigo.product.service.ProductImageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,23 +24,23 @@ public class ProductImageController {
     }
 
     @PostMapping(value="/{productId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<ProductImageResponse> uploadImage(
+    public ResponseEntity<ApiResponse<?>> uploadImage(
             @PathVariable Long productId,
             @RequestParam MultipartFile file,
             @RequestParam(defaultValue = "false") Boolean isPrimary
     ) {
-        return ApiResponse.ok("Image uploaded",
-                service.upload(productId, file, isPrimary));
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Image uploaded",
+                service.upload(productId, file, isPrimary)),HttpStatus.CREATED);
     }
 
     @GetMapping("get/{productId}")
-    public ApiResponse<List<ProductImage>> getImages(@PathVariable Long productId) {
-        return ApiResponse.ok("Images", service.getImages(productId));
+    public ResponseEntity<ApiResponse<?>> getImages(@PathVariable Long productId) {
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Images", service.getImages(productId)),HttpStatus.OK);
     }
 
     @DeleteMapping("delete/{imageId}")
-    public ApiResponse<Object> delete(@PathVariable Long imageId) {
+    public ResponseEntity<ApiResponse<?>> delete(@PathVariable Long imageId) {
         service.delete(imageId);
-        return ApiResponse.ok("Deleted", null);
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Deleted", null),HttpStatus.NO_CONTENT);
     }
 }

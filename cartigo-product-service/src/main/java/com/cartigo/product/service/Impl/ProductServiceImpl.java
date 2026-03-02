@@ -1,5 +1,6 @@
 package com.cartigo.product.service.Impl;
 
+import com.cartigo.product.client.CategoryClient;
 import com.cartigo.product.dto.ProductCreateRequest;
 import com.cartigo.product.dto.ProductUpdateRequest;
 import com.cartigo.product.entity.Product;
@@ -15,10 +16,13 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryClient categoryClient;
 
-    public ProductServiceImpl(ProductRepository productRepository){
+    public ProductServiceImpl(ProductRepository productRepository, CategoryClient categoryClient) {
         this.productRepository = productRepository;
+        this.categoryClient = categoryClient;
     }
+
     @Override
     public Product createProduct(ProductCreateRequest request) {
 
@@ -77,7 +81,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProductsByCategoryId(Long categoryId) {
+    public List<Product> getProductsByCategoryId(String categoryName) {
+        Long categoryId = categoryClient.getCategroyId(categoryName);
         List<Product> p = productRepository.findByCategoryId(categoryId);
         if(p.isEmpty()) throw new ResourceNotFoundException("Products Not Found with Category");
         return p;
