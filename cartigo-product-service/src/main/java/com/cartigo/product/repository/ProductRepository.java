@@ -3,18 +3,22 @@ package com.cartigo.product.repository;
 import com.cartigo.product.entity.Product;
 import com.cartigo.product.entity.ProductStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+@Repository
+public interface ProductRepository extends JpaRepository<Product,Long> {
+
+    List<Product> findByNameContainingIgnoreCase(String name);
+
+    List<Product> findBySellerId(Long sellerId);
+
+    List<Product> findByCategoryId(Long categoryId);
 
     boolean existsBySku(String sku);
 
-    List<Product> findByStatus(ProductStatus status);
+    List<Product> findByStatus(ProductStatus productStatus);
 
-    List<Product> findByCategoryIdAndStatus(Long categoryId, ProductStatus status);
-
-    List<Product> findByBrandIgnoreCaseAndStatus(String brand, ProductStatus status);
-
-    List<Product> findByNameContainingIgnoreCaseAndStatus(String keyword, ProductStatus status);
+    List<Product> findByBrandIgnoreCaseAndStatus(String brand, ProductStatus productStatus);
 }

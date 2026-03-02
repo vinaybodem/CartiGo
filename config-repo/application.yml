@@ -21,7 +21,7 @@ management:
       exposure:
         include: health,info
 
-spring:
-  jackson:
-    serialization:
-      write-dates-as-timestamps: false
+#spring:
+#  jackson:
+#    serialization:
+#      write-dates-as-timestamps: false

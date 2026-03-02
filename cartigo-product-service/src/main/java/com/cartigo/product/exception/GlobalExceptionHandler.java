@@ -1,7 +1,6 @@
 package com.cartigo.product.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.cartigo.product.common.ApiResponse;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,40 +13,23 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> notFound(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                "message", ex.getMessage(),
-                "status", 404
-        ));
+    public ApiResponse<Object> handleNotFound(ResourceNotFoundException ex) {
+        return ApiResponse.fail(ex.getMessage());
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, Object>> badRequest(BadRequestException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                "message", ex.getMessage(),
-                "status", 400
-        ));
+    public ApiResponse<Object> handleNotFound(BadRequestException ex) {
+        return ApiResponse.fail(ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> validation(MethodArgumentNotValidException ex) {
+    public ApiResponse<Map<String, String>> validation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         for (FieldError fe : ex.getBindingResult().getFieldErrors()) {
             errors.put(fe.getField(), fe.getDefaultMessage());
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                "message", "Validation failed",
-                "errors", errors,
-                "status", 400
-        ));
+
+        return ApiResponse.ok("errors",errors);
     }
 
-    // ✅ ADD THIS
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> any(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "message", ex.getMessage(),
-                "status", 500
-        ));
-    }
 }

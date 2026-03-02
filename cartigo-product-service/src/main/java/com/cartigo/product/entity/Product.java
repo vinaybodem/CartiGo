@@ -6,52 +6,31 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "products",
-        uniqueConstraints = @UniqueConstraint(name = "uk_products_sku", columnNames = "sku")
-)
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @Column(nullable = false, length = 200)
-    private String name;
+        private String name;
+        private String description;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String description;
+        private BigDecimal price;
+        private BigDecimal discountPrice;
 
-    @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal price;
+        private String brand;
+        private String sku;
 
-    @Column(name = "discount_price", precision = 12, scale = 2)
-    private BigDecimal discountPrice;
+        private ProductStatus status;
 
-    @Column(nullable = false, length = 80)
-    private String brand;
+        // coming from other services
+        private Long sellerId;
+        private Long categoryId;
 
-    @Column(nullable = false, length = 80, unique = true)
-    private String sku;
+        private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "image_url", nullable = false, length = 500)
-    private String imageUrl;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private ProductStatus status = ProductStatus.ACTIVE;
-
-    @Column(name = "category_id", nullable = false)
-    private Long categoryId;
-
-    @Column(name = "seller_id", nullable = false)
-    private Long sellerId;
-
-    @Column(name = "stock_quantity", nullable = false)
-    private Integer stockQuantity;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+        @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+        private ProductImage images ;
 
     @PrePersist
     public void onCreate() {
@@ -59,43 +38,99 @@ public class Product {
         if (this.status == null) this.status = ProductStatus.ACTIVE;
     }
 
-    public Product() {}
+    public Long getId() {
+        return id;
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {
+        return name;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public String getDescription() {
+        return description;
+    }
 
-    public BigDecimal getDiscountPrice() { return discountPrice; }
-    public void setDiscountPrice(BigDecimal discountPrice) { this.discountPrice = discountPrice; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public String getBrand() { return brand; }
-    public void setBrand(String brand) { this.brand = brand; }
+    public BigDecimal getPrice() {
+        return price;
+    }
 
-    public String getSku() { return sku; }
-    public void setSku(String sku) { this.sku = sku; }
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public BigDecimal getDiscountPrice() {
+        return discountPrice;
+    }
 
-    public ProductStatus getStatus() { return status; }
-    public void setStatus(ProductStatus status) { this.status = status; }
+    public void setDiscountPrice(BigDecimal discountPrice) {
+        this.discountPrice = discountPrice;
+    }
 
-    public Long getCategoryId() { return categoryId; }
-    public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
+    public String getBrand() {
+        return brand;
+    }
 
-    public Long getSellerId() { return sellerId; }
-    public void setSellerId(Long sellerId) { this.sellerId = sellerId; }
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
 
-    public Integer getStockQuantity() { return stockQuantity; }
-    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+    public String getSku() {
+        return sku;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public ProductStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProductStatus active) {
+        status = active;
+    }
+
+    public Long getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public ProductImage getImage() {
+        return images;
+    }
+
+    public void setImage( ProductImage image) {
+        this.images = images;
+    }
 }

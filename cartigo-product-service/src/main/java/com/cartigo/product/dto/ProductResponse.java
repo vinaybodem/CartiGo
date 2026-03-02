@@ -1,5 +1,6 @@
 package com.cartigo.product.dto;
 
+import com.cartigo.product.entity.ProductImage;
 import com.cartigo.product.entity.ProductStatus;
 
 import java.math.BigDecimal;
@@ -14,13 +15,12 @@ public class ProductResponse {
     private BigDecimal discountPrice;
     private String brand;
     private String sku;
-    private String imageUrl;
+
     private ProductStatus status;
     private Long categoryId;
     private Long sellerId;
-    private Integer stockQuantity;
     private LocalDateTime createdAt;
-
+    private ProductImage image;
     public ProductResponse() {}
 
     public Long getId() { return id; }
@@ -44,8 +44,13 @@ public class ProductResponse {
     public String getSku() { return sku; }
     public void setSku(String sku) { this.sku = sku; }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public ProductImage getImage() {
+        return image;
+    }
+
+    public void setImage(ProductImage image) {
+        this.image = image;
+    }
 
     public ProductStatus getStatus() { return status; }
     public void setStatus(ProductStatus status) { this.status = status; }
@@ -56,8 +61,6 @@ public class ProductResponse {
     public Long getSellerId() { return sellerId; }
     public void setSellerId(Long sellerId) { this.sellerId = sellerId; }
 
-    public Integer getStockQuantity() { return stockQuantity; }
-    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
