@@ -56,9 +56,9 @@ public class ProductController {
         return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Product", ProductMapper.toResponse(service.getProductById(id))),HttpStatus.OK);
     }
 
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<ApiResponse<?>> listByCategory(@PathVariable Long categoryId) {
-        List<ProductResponse> out = service.getProductsByCategoryId(categoryId).stream()
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<ApiResponse<?>> listByCategory(@PathVariable String categoryName) {
+        List<ProductResponse> out = service.getProductsByCategoryId(categoryName).stream()
                 .map(ProductMapper::toResponse)
                 .collect(Collectors.toList());
         return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Products by category ",out),HttpStatus.OK);
