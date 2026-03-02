@@ -1,6 +1,6 @@
 package com.cartigo.user.dto;
 
-import com.cartigo.user.entity.Role;
+import com.cartigo.authservice.client.dto.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

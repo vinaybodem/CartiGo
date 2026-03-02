@@ -16,11 +16,10 @@ public class ProductMapper {
         r.setDiscountPrice(p.getDiscountPrice());
         r.setBrand(p.getBrand());
         r.setSku(p.getSku());
-        r.setImageUrl(p.getImageUrl());
+        r.setImage(p.getImage());
         r.setStatus(p.getStatus());
         r.setCategoryId(p.getCategoryId());
         r.setSellerId(p.getSellerId());
-        r.setStockQuantity(p.getStockQuantity());
         r.setCreatedAt(p.getCreatedAt());
         return r;
     }

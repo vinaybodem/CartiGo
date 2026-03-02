@@ -1,32 +1,42 @@
-server:
-  port: 8082
-
+#server:
+#  port: 8082
+#
+#spring:
+#  application:
+#    name: cartigo-user-service
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/cartigo_user?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#    username: root
+#    password: root
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate:
+#        format_sql: true
+#    open-in-view: false
+#
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info
+#
+#springdoc:
+#  swagger-ui:
+#    path: /swagger-ui.html
 spring:
   application:
-    name: cartigo-user-service
-  datasource:
-    url: jdbc:mysql://localhost:3306/cartigo_user?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: root
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-    open-in-view: false
+    name: user-service
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+  config:
+    import: optional:configserver:http://localhost:8888
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
+#  cloud:
+#    config:
+#      uri: http://localhost:8888
