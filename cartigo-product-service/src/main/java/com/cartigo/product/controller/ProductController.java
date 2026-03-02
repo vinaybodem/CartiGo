@@ -8,6 +8,8 @@ import com.cartigo.product.entity.Product;
 import com.cartigo.product.entity.ProductStatus;
 import com.cartigo.product.mapper.ProductMapper;
 import com.cartigo.product.service.ProductService;
+import org.apache.http.protocol.HTTP;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +27,15 @@ public class ProductController {
     }
 
     @PostMapping("addproduct")
-    public ApiResponse<ProductResponse> createProduct(@RequestBody ProductCreateRequest request) {
+    public ResponseEntity<ApiResponse<?>> createProduct(@RequestBody ProductCreateRequest request) {
         Product p = service.createProduct(request);
-        return ApiResponse.ok("Created", ProductMapper.toResponse(p));
+//        return ApiResponse.ok("Created", ProductMapper.toResponse(p));
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Created", ProductMapper.toResponse(p)), HttpStatus.CREATED);
     }
 
     @GetMapping("get")
-    public ApiResponse<List<ProductResponse>> getProductsBySellerId(@RequestParam(required = false) String q,
-                                           @RequestParam(required = false) Long sellerId) {
+    public ResponseEntity<ApiResponse<?>> getProductsBySellerId(@RequestParam(required = false) String q,
+                                                                @RequestParam(required = false) Long sellerId) {
 //        if (q != null && !q.isBlank())
 //            return ApiResponse.ok("Search results", service.searchProductsByName(q));
 
@@ -40,64 +43,55 @@ public class ProductController {
             List<ProductResponse> out = service.getProductsBySeller(sellerId).stream()
                     .map(ProductMapper::toResponse)
                     .collect(Collectors.toList());
-            return ApiResponse.ok("Seller products", out);
+            return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Seller products", out), HttpStatus.OK);
         }
         List<ProductResponse> out = service.getAllProducts().stream()
                 .map(ProductMapper::toResponse)
                 .collect(Collectors.toList());
-
-        return ApiResponse.ok("All products", out);
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("All products", out),HttpStatus.OK);
     }
 
     @GetMapping("getproduct/{id}")
-    public ApiResponse<ProductResponse> getProduct(@PathVariable Long id) {
-        return ApiResponse.ok("Product", ProductMapper.toResponse(service.getProductById(id)));
-    }
-
-    @GetMapping
-    public ApiResponse<List<ProductResponse>> listActiveProducts() {
-        List<ProductResponse> out = service.listActiveProducts().stream()
-                .map(ProductMapper::toResponse)
-                .collect(Collectors.toList());
-        return ApiResponse.ok("Active Products ",out);
+    public ResponseEntity<ApiResponse<?>> getProduct(@PathVariable Long id) {
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Product", ProductMapper.toResponse(service.getProductById(id))),HttpStatus.OK);
     }
 
     @GetMapping("/category/{categoryId}")
-    public ApiResponse<List<ProductResponse>> listByCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<ApiResponse<?>> listByCategory(@PathVariable Long categoryId) {
         List<ProductResponse> out = service.getProductsByCategoryId(categoryId).stream()
                 .map(ProductMapper::toResponse)
                 .collect(Collectors.toList());
-        return ApiResponse.ok("Products by category ",out);
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Products by category ",out),HttpStatus.OK);
     }
 
     // Brand filter
     @GetMapping("/brand/{brand}")
-    public ApiResponse<List<ProductResponse>> listByBrand(@PathVariable String brand) {
+    public ResponseEntity<ApiResponse<?>> listByBrand(@PathVariable String brand) {
         List<ProductResponse> out = service.listByBrand(brand).stream()
                 .map(ProductMapper::toResponse)
                 .collect(Collectors.toList());
-        return ApiResponse.ok("Products By Brand",out);
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Products By Brand",out),HttpStatus.OK);
     }
     @GetMapping("/search")
-    public ApiResponse<List<ProductResponse>> search(@RequestParam("q") String q) {
+    public ResponseEntity<ApiResponse<?>> search(@RequestParam("q") String q) {
         List<ProductResponse> out = service.searchProductsByName(q).stream()
                 .map(ProductMapper::toResponse)
                 .collect(Collectors.toList());
-        return ApiResponse.ok("searched products",out);
+        return new ResponseEntity<>(ApiResponse.ok("searched products",out),HttpStatus.OK);
     }
     @PutMapping("update/{id}")
-    public ApiResponse<ProductResponse> updateProduct(@PathVariable Long id, @RequestBody ProductUpdateRequest p) {
-        return ApiResponse.ok("Updated", ProductMapper.toResponse(service.updateProduct(id, p)));
+    public ResponseEntity<ApiResponse<?>> updateProduct(@PathVariable Long id, @RequestBody ProductUpdateRequest p) {
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Updated", ProductMapper.toResponse(service.updateProduct(id, p))),HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<ProductResponse> setStatus(@PathVariable Long id,
+    public ResponseEntity<ApiResponse<?>> setStatus(@PathVariable Long id,
                                                      @RequestParam ProductStatus value) {
-        return ResponseEntity.ok(ProductMapper.toResponse(service.setStatus(id, value)));
+        return new ResponseEntity<>(ApiResponse.ok("Status Changed",ProductMapper.toResponse(service.setStatus(id, value))),HttpStatus.OK);
     }
     @DeleteMapping("delete/{id}")
-    public ApiResponse<Object> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<?>> delete(@PathVariable Long id) {
         service.deleteProducts(id);
-        return ApiResponse.ok("Deleted", null);
+        return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Deleted", null),HttpStatus.NO_CONTENT);
     }
 }
