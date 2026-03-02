@@ -21,5 +21,5 @@ public interface CategoryService {
     Long getCategoryId(String categoryName);
     void deleteCategory(String name);
 
-    boolean isValidCategory(String name);
+    boolean isValidCategory(Long categoryId);
 }

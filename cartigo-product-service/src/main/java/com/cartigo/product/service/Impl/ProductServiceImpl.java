@@ -1,8 +1,10 @@
 package com.cartigo.product.service.Impl;
 
 import com.cartigo.product.client.CategoryClient;
+import com.cartigo.product.client.SellerClient;
 import com.cartigo.product.dto.ProductCreateRequest;
 import com.cartigo.product.dto.ProductUpdateRequest;
+import com.cartigo.product.dto.SellerDto;
 import com.cartigo.product.entity.Product;
 import com.cartigo.product.entity.ProductStatus;
 import com.cartigo.product.exception.BadRequestException;
@@ -17,17 +19,21 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryClient categoryClient;
+    private final SellerClient sellerClient;
 
-    public ProductServiceImpl(ProductRepository productRepository, CategoryClient categoryClient) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryClient categoryClient, SellerClient sellerClient) {
         this.productRepository = productRepository;
         this.categoryClient = categoryClient;
+        this.sellerClient = sellerClient;
     }
 
     @Override
     public Product createProduct(ProductCreateRequest request) {
 
-//        if(!SellerClient.isSellerValid(product.getSellerId())) throw new RuntimeException("Invalid Seller");
-//        if(!CategoryClient.isCategoryValid(product.getCategoryId())) throw new RuntimeException("Invalid Category");
+        SellerDto seller = sellerClient.getSellerById(request.getSellerId());
+
+        if(seller == null) throw new RuntimeException("Invalid Seller");
+        if(!categoryClient.isCategoryValid(request.getCategoryId())) throw new RuntimeException("Invalid Category");
         if (productRepository.existsBySku(request.getSku())) {
             throw new BadRequestException("SKU already exists");
         }

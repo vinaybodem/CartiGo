@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "CARTIGO-CATEGORY-SERVICE")
 public interface CategoryClient {
 
-    @GetMapping("/categories/{id}/validate")
-    boolean isCategoryValid(@PathVariable Long id);
+    @GetMapping("api/category/validate/{category_id}")
+    boolean isCategoryValid(@PathVariable Long category_id);
 
     @GetMapping("api/category/getId/{category_name}")
     public Long getCategroyId(@PathVariable String category_name);

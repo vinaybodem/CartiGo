@@ -66,8 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public boolean isValidCategory(String name) {
-        Long id = getCategoryId(name);
-        return categoryRepository.existsById(id);
+    public boolean isValidCategory(Long categoryId) {
+        return categoryRepository.existsById(categoryId);
     }
 }
