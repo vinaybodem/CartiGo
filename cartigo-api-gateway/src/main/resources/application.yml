@@ -11,86 +11,108 @@ spring:
 
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
 
-      # ✅ Gateway-level CORS (recommended)
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - PATCH
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
-            allowCredentials: false
+          # ✅ Gateway-level CORS (recommended)
+          globalcors:
+            corsConfigurations:
+              '[/**]':
+                allowedOrigins: "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - PATCH
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders: "*"
+                allowCredentials: false
 
-      routes:
-        # Auth service
-        - id: auth-service
-          uri: lb://cartigo-auth-service
-          predicates:
-            - Path=/auth/**
+          routes:
+            # Auth service
+            - id: auth-service
+              uri: lb://CARTIGO-AUTH-SERVICE
+              predicates:
+                - Path=/auth/**
 
-        # User service
-        - id: user-service
-          uri: lb://cartigo-user-service
-          predicates:
-            - Path=/api/users/**,/api/customers/**,/api/sellers/**,/api/admins/**
+            # User service
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/users/**,/api/customers/**,/api/sellers/**,/api/admins/**
 
-        # Product service
-        - id: product-service
-          uri: lb://cartigo-product-service
-          predicates:
-            - Path=/api/products/**,/api/categories/**
+            # Product service
+            - id: product-service
+              uri: lb://product-service
+              predicates:
+                - Path=/api/products/**
 
-        # Cart service
-        - id: cart-service
-          uri: lb://cartigo-cart-service
-          predicates:
-            - Path=/api/cart/**
+            # category service
+            - id: category-service
+              uri: lb://CARTIGO-CATEGORY-SERVICE
+              predicates:
+                - Path=/api/categories/**
 
-        # Inventory service
-        - id: inventory-service
-          uri: lb://cartigo-inventory-service
-          predicates:
-            - Path=/api/inventory/**
+            # Cart service
+            - id: cart-service
+              uri: lb://cartigo-cart-service
+              predicates:
+                - Path=/api/cart/**
 
-        # Order service
-        - id: order-service
-          uri: lb://cartigo-order-service
-          predicates:
-            - Path=/api/orders/**
+            # Inventory service
+            - id: inventory-service
+              uri: lb://cartigo-inventory-service
+              predicates:
+                - Path=/api/inventory/**
 
-        # Payment service
-        - id: payment-service
-          uri: lb://cartigo-payment-service
-          predicates:
-            - Path=/api/payments/**
+            # Order service
+            - id: order-service
+              uri: lb://cartigo-order-service
+              predicates:
+                - Path=/api/orders/**
 
-        # Review service
-        - id: review-service
-          uri: lb://cartigo-review-service
-          predicates:
-            - Path=/api/reviews/**
+            # Payment service
+            - id: payment-service
+              uri: lb://cartigo-payment-service
+              predicates:
+                - Path=/api/payments/**
 
-        # Return/Refund service (your controller is /api/returns/**)
-        - id: return-refund-service
-          uri: lb://cartigo-return-refund-service
-          predicates:
-            - Path=/api/returns/**
+            # Review service
+            - id: review-service
+              uri: lb://cartigo-review-service
+              predicates:
+                - Path=/api/reviews/**
 
-        # Reporting/Analytics service
-        - id: reporting-analytics-service
-          uri: lb://cartigo-reporting-analytics-service
-          predicates:
-            - Path=/api/analytics/**
+            # Return/Refund service (your controller is /api/returns/**)
+            - id: return-refund-service
+              uri: lb://cartigo-return-refund-service
+              predicates:
+                - Path=/api/returns/**
+
+            # Reporting/Analytics service
+            - id: reporting-analytics-service
+              uri: lb://cartigo-reporting-analytics-service
+              predicates:
+                - Path=/api/analytics/**
+
+            - id: category-service-swagger
+              uri: lb://CARTIGO-CATEGORY-SERVICE
+              predicates:
+                - Path=/category-service-swagger/v3/api-docs
+              filters:
+                - StripPrefix=1
+
+            - id: auth-service-swagger
+              uri: lb://CARTIGO-AUTH-SERVICE
+              predicates:
+                - Path=/auth-service-swagger/v3/api-docs
+              filters:
+                - StripPrefix=1
 
 eureka:
   client:
@@ -101,4 +123,21 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: "*"
+springdoc:
+  swagger-ui:
+    urls:
+      - name: product-service
+        url: product-service/v3/api-docs
+
+      - name: category-service
+        url: category-service-swagger/v3/api-docs
+
+      - name: auth-service
+        url: auth-service-swagger/v3/api-docs
+
+      - name: user-service
+        url: user-service/v3/api-docs
+jwt:
+  secret: ${JWT_SECRET:change-me-to-a-long-secret-change-me-to-a-long-secret}
+  expirationMinutes: ${JWT_EXP_MINUTES:60}
