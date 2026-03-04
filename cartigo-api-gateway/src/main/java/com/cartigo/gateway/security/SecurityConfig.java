@@ -39,6 +39,7 @@ public class SecurityConfig {
 //                        .pathMatchers("/auth-service/v3/api-docs/**").permitAll()
                         .pathMatchers("/auth-service-swagger/v3/api-docs/**").permitAll()
                         .pathMatchers("/user-service/v3/api-docs/**").permitAll()
+                        .pathMatchers("/inventory-service/v3/api-docs/**").permitAll()
 
                         .pathMatchers("/webjars/**").permitAll()          // static JS/CSS assets
                         .pathMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
