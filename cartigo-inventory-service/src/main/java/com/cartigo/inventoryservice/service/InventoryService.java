@@ -8,7 +8,7 @@ public interface InventoryService {
     Inventory createOrUpdate(Long productId, Integer totalStock, HttpServletRequest request);
 
     Inventory getByProductId(Long productId);
-
+    Boolean checkAvailability(Long productId);
     void reserveStock(Long productId, Integer quantity);
 
     void releaseStock(Long productId, Integer quantity);

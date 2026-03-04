@@ -64,5 +64,10 @@ public class InventoryController {
         inventoryService.reduceStock(productId, qty);
         return ApiResponse.ok("Reduced", null);
     }
+
+    @GetMapping("/available/{productId}")
+    Boolean checkAvailability(@PathVariable Long productId){
+       return inventoryService.checkAvailability(productId);
+    }
 }
 

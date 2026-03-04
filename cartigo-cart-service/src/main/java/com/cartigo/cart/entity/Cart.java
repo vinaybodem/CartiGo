@@ -35,4 +35,13 @@ public class Cart {
     public void setUserId(Long userId) { this.userId = userId; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }
