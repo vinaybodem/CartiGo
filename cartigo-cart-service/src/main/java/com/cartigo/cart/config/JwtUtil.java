@@ -1,4 +1,4 @@
-package com.cartigo.inventoryservice.config;
+package com.cartigo.cart.config;
 
 
 import io.jsonwebtoken.Claims;
