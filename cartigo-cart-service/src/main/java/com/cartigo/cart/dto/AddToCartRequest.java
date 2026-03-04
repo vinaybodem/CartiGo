@@ -16,30 +16,46 @@ public class AddToCartRequest {
     @Positive
     private Integer quantity;
 
-    @NotBlank
-    private String productName;
+    public Long getProductId() {
+        return productId;
+    }
 
-    @NotBlank
-    private String imageUrl;
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
-    @NotNull
-    @PositiveOrZero
-    private BigDecimal unitPrice;
+    public Integer getQuantity() {
+        return quantity;
+    }
 
-    public AddToCartRequest() {}
-
-    public Long getProductId() { return productId; }
-    public void setProductId(Long productId) { this.productId = productId; }
-
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
-
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
-
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-
-    public BigDecimal getUnitPrice() { return unitPrice; }
-    public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+    //
+//    @NotBlank
+//    private String productName;
+//
+//    @NotBlank
+//    private String imageUrl;
+//
+//    @NotNull
+//    @PositiveOrZero
+//    private BigDecimal unitPrice;
+//
+//    public AddToCartRequest() {}
+//
+//    public Long getProductId() { return productId; }
+//    public void setProductId(Long productId) { this.productId = productId; }
+//
+//    public Integer getQuantity() { return quantity; }
+//    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+//
+//    public String getProductName() { return productName; }
+//    public void setProductName(String productName) { this.productName = productName; }
+//
+//    public String getImageUrl() { return imageUrl; }
+//    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+//
+//    public BigDecimal getUnitPrice() { return unitPrice; }
+//    public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
 }

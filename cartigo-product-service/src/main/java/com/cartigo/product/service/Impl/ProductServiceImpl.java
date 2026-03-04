@@ -104,6 +104,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public CartResponse getCartResponse(Long productId) {
+        Product product = getProductById(productId);
+        CartResponse cartResponse= new CartResponse();
+        cartResponse.setId(product.getId());
+        cartResponse.setName(product.getName());
+        String imageUrl = product.getImage() != null
+                ? product.getImage().getImageUrl()
+                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHICWZcFeQ7UuaU7N30-E4Vt1GaTYIU1DIEA&s";
+        cartResponse.setImageUrl(imageUrl);
+        cartResponse.setPrice(product.getPrice());
+        return cartResponse;
+    }
+
+    @Override
     public ResponseToInvetory getProductIdAndSellerId(Long id) {
         Product product = getProductById(id);
         return new ResponseToInvetory(product.getId(), product.getSellerId());

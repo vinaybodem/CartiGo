@@ -1,9 +1,8 @@
 package com.cartigo.cart.service;
 
-import com.cartigo.cart.dto.AddToCartRequest;
-import com.cartigo.cart.dto.CartItemResponse;
-import com.cartigo.cart.dto.CartResponse;
-import com.cartigo.cart.dto.UpdateCartItemRequest;
+import com.cartigo.cart.client.InventoryClient;
+import com.cartigo.cart.client.ProductClient;
+import com.cartigo.cart.dto.*;
 import com.cartigo.cart.entity.Cart;
 import com.cartigo.cart.entity.CartItem;
 import com.cartigo.cart.exception.BadRequestException;
@@ -11,127 +10,199 @@ import com.cartigo.cart.exception.ResourceNotFoundException;
 import com.cartigo.cart.mapper.CartMapper;
 import com.cartigo.cart.repository.CartItemRepository;
 import com.cartigo.cart.repository.CartRepository;
+//import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final ProductClient productClient;
+    private final InventoryClient inventoryClient;
 
-    public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository) {
+    public CartService(
+            CartRepository cartRepository,
+            CartItemRepository cartItemRepository,
+            ProductClient productClient,
+            InventoryClient inventoryClient
+    ) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.productClient = productClient;
+        this.inventoryClient = inventoryClient;
     }
 
     @Transactional
-    public CartResponse getCart(Long userId) {
-        Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
-            Cart c = new Cart();
-            c.setUserId(userId);
-            return cartRepository.save(c);
-        });
-
-        List<CartItem> items = cartItemRepository.findByCartId(cart.getId());
-        return buildResponse(userId, items);
+    public Cart getOrCreateCart(Long userId) {
+        return cartRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    Cart cart = new Cart();
+                    cart.setUserId(userId);
+                    return cartRepository.save(cart);
+                });
     }
 
     @Transactional
     public CartResponse addItem(Long userId, AddToCartRequest req) {
+
         if (req.getQuantity() == null || req.getQuantity() <= 0) {
-            throw new BadRequestException("Quantity must be > 0");
+            throw new BadRequestException("Quantity must be greater than 0");
         }
 
-        Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
-            Cart c = new Cart();
-            c.setUserId(userId);
-            return cartRepository.save(c);
-        });
+        Cart cart = getOrCreateCart(userId);
+        System.out.println(cart);
+        System.out.println("card id: "+cart.getId());
+        // Always fetch product from product-service (do NOT trust request payload)
+        ProductResponse product = productClient.getProduct(req.getProductId());
 
-        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), req.getProductId())
+        if (product == null) {
+            throw new ResourceNotFoundException("Product not found");
+        }
+
+        // Check inventory availability
+        Boolean available = inventoryClient.checkAvailability(req.getProductId());
+        if (Boolean.FALSE.equals(available)) {
+            throw new BadRequestException("Requested quantity not available in inventory");
+        }
+
+        CartItem item = cartItemRepository
+                .findByCartIdAndProductId(cart.getId(), product.getId())
                 .orElseGet(() -> {
                     CartItem ci = new CartItem();
                     ci.setCartId(cart.getId());
-                    ci.setProductId(req.getProductId());
+                    ci.setProductId(product.getId());
                     ci.setQuantity(0);
-                    ci.setProductName(req.getProductName());
-                    ci.setImageUrl(req.getImageUrl());
-                    ci.setUnitPrice(req.getUnitPrice());
                     return ci;
                 });
 
-        // Snapshot update (good)
-        item.setProductName(req.getProductName());
-        item.setImageUrl(req.getImageUrl());
-        item.setUnitPrice(req.getUnitPrice());
+        int updatedQty = (item.getQuantity() == null ? 0 : item.getQuantity()) + req.getQuantity();
 
-        int currentQty = item.getQuantity() == null ? 0 : item.getQuantity();
-        item.setQuantity(currentQty + req.getQuantity());
+        // Snapshot product details
+        item.setProductName(product.getName());
+        item.setImageUrl(product.getImageUrl());
+        item.setUnitPrice(product.getPrice());
+        item.setQuantity(updatedQty);
 
         cartItemRepository.save(item);
 
-        List<CartItem> items = cartItemRepository.findByCartId(cart.getId());
-        return buildResponse(userId, items);
+        return buildCartResponse(userId, cart.getId());
     }
 
     @Transactional
     public CartResponse updateItem(Long userId, Long productId, UpdateCartItemRequest req) {
-        Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for userId " + userId));
 
-        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found for productId " + productId));
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Cart not found for userId " + userId));
+
+        CartItem item = cartItemRepository
+                .findByCartIdAndProductId(cart.getId(), productId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Cart item not found for productId " + productId));
 
         if (req.getQuantity() == null || req.getQuantity() <= 0) {
             cartItemRepository.delete(item);
         } else {
+
+            Boolean available = inventoryClient.checkAvailability(productId);
+
+            if (Boolean.FALSE.equals(available)) {
+                throw new BadRequestException("Requested quantity not available");
+            }
+
             item.setQuantity(req.getQuantity());
             cartItemRepository.save(item);
         }
 
-        List<CartItem> items = cartItemRepository.findByCartId(cart.getId());
-        return buildResponse(userId, items);
+        return buildCartResponse(userId, cart.getId());
     }
 
     @Transactional
     public CartResponse removeItem(Long userId, Long productId) {
-        Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for userId " + userId));
 
-        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found for productId " + productId));
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Cart not found for userId " + userId));
+
+        CartItem item = cartItemRepository
+                .findByCartIdAndProductId(cart.getId(), productId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Cart item not found for productId " + productId));
 
         cartItemRepository.delete(item);
 
-        List<CartItem> items = cartItemRepository.findByCartId(cart.getId());
-        return buildResponse(userId, items);
+        return buildCartResponse(userId, cart.getId());
     }
 
     @Transactional
     public void clearCart(Long userId) {
+
         Cart cart = cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for userId " + userId));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Cart not found for userId " + userId));
+
         cartItemRepository.deleteByCartId(cart.getId());
     }
 
-    private CartResponse buildResponse(Long userId, List<CartItem> items) {
-        List<CartItemResponse> out = items.stream()
-                .map(CartMapper::toItemResponse)
-                .collect(Collectors.toList());
+    public CartResponse getCart(Long userId) {
 
-        BigDecimal total = out.stream()
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Cart not found for userId " + userId));
+
+        return buildCartResponse(userId, cart.getId());
+    }
+    @Transactional(readOnly = true)
+    public CheckoutValidationResponse validateCheckout(Long userId) {
+
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Cart not found"));
+
+        List<CartItem> items = cartItemRepository.findByCartId(cart.getId());
+
+        if (items.isEmpty()) {
+            throw new BadRequestException("Cart is empty");
+        }
+
+        for (CartItem item : items) {
+
+            Boolean available = inventoryClient.checkAvailability(
+                    item.getProductId()
+            );
+
+            if (Boolean.FALSE.equals(available)) {
+                throw new BadRequestException(
+                        "Product out of stock: " + item.getProductName()
+                );
+            }
+        }
+
+        return new CheckoutValidationResponse(true,"Cart validated successfully");
+    }
+    private CartResponse buildCartResponse(Long userId, Long cartId) {
+
+        List<CartItem> items = cartItemRepository.findByCartId(cartId);
+
+        List<CartItemResponse> itemResponses = items.stream()
+                .map(CartMapper::toItemResponse)
+                .toList();
+
+        BigDecimal total = itemResponses.stream()
                 .map(CartItemResponse::getLineTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        CartResponse r = new CartResponse();
-        r.setUserId(userId);
-        r.setItems(out);
-        r.setTotalAmount(total);
-        return r;
+        CartResponse response = new CartResponse();
+        response.setCartId(cartId);
+        response.setUserId(userId);
+        response.setItems(itemResponses);
+        response.setTotalAmount(total);
+
+        return response;
     }
 }

@@ -22,7 +22,8 @@ spring:
           globalcors:
             corsConfigurations:
               '[/**]':
-                allowedOrigins: "*"
+                allowedOrigins:
+                  - http://localhost:8080
                 allowedMethods:
                   - GET
                   - POST
@@ -31,7 +32,7 @@ spring:
                   - DELETE
                   - OPTIONS
                 allowedHeaders: "*"
-                allowCredentials: false
+                allowCredentials: true
 
           routes:
             # Auth service
@@ -60,7 +61,7 @@ spring:
 
             # Cart service
             - id: cart-service
-              uri: lb://cartigo-cart-service
+              uri: lb://CART-SERVICE
               predicates:
                 - Path=/api/cart/**
 
@@ -141,6 +142,9 @@ springdoc:
 
       - name: inventory-service
         url: /inventory-service/v3/api-docs
+
+      - name: cart-service
+        url: /cart-service/v3/api-docs
 jwt:
   secret: ${JWT_SECRET:change-me-to-a-long-secret-change-me-to-a-long-secret}
   expirationMinutes: ${JWT_EXP_MINUTES:60}

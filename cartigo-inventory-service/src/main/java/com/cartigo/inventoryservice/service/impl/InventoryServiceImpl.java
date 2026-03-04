@@ -55,6 +55,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    public Boolean checkAvailability(Long productId) {
+        Inventory inventory = getByProductId(productId);
+        if(inventory.getAvailableStock()<=0) return false;
+        return true;
+    }
+
+    @Override
     public void reserveStock(Long productId, Integer quantity) {
 
         ProductResponse product = productClient.validate(productId);

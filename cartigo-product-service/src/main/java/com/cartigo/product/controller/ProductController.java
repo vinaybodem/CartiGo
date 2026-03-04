@@ -1,10 +1,7 @@
 package com.cartigo.product.controller;
 
-import com.cartigo.product.dto.ProductUpdateRequest;
+import com.cartigo.product.dto.*;
 import com.cartigo.product.common.ApiResponse;
-import com.cartigo.product.dto.ProductCreateRequest;
-import com.cartigo.product.dto.ProductResponse;
-import com.cartigo.product.dto.ResponseToInvetory;
 import com.cartigo.product.entity.Product;
 import com.cartigo.product.entity.ProductStatus;
 import com.cartigo.product.mapper.ProductMapper;
@@ -53,7 +50,7 @@ public class ProductController {
     }
 
     @GetMapping("getproduct/{id}")
-    public ResponseEntity<ApiResponse<?>> getProduct(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<?>> getProductById(@PathVariable Long id) {
         return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Product", ProductMapper.toResponse(service.getProductById(id))),HttpStatus.OK);
     }
 
@@ -96,6 +93,10 @@ public class ProductController {
         return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Deleted", null),HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/cart/{prod_id}")
+    public CartResponse getProduct(@PathVariable Long prod_id){
+        return service.getCartResponse(prod_id);
+    }
     @GetMapping("/validate/{pord_id}")
     public ResponseToInvetory validate(@PathVariable Long pord_id) {
         return  service.getProductIdAndSellerId(pord_id);

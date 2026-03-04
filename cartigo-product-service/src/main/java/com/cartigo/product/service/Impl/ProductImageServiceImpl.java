@@ -30,30 +30,47 @@ public class ProductImageServiceImpl implements ProductImageService {
     private static final String UPLOAD_DIR = "uploads/products/";
     @Override
     public ProductImageResponse upload(Long productId, MultipartFile file, Boolean isPrimary) {
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         try {
-            Files.createDirectories(Paths.get(UPLOAD_DIR));
+
+            if (file == null || file.isEmpty()) {
+                throw new RuntimeException("File is empty");
+            }
+
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
 
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(UPLOAD_DIR + fileName);
 
-            Files.write(filePath, file.getBytes());
+            Path filePath = uploadPath.resolve(fileName);
+
+            Files.copy(file.getInputStream(), filePath);
 
             ProductImage image = new ProductImage();
-                    image.setImageUrl("/" + UPLOAD_DIR + fileName);
-                    image.setPrimary(isPrimary);
-                    image.setProduct(product);
+            image.setImageUrl("/" + UPLOAD_DIR + fileName);
+            image.setPrimary(isPrimary);
+            image.setProduct(product);
 
+            ProductImage saved = imageRepository.save(image);
 
-             ProductImage saved = imageRepository.save(image);
-             product.setImage(saved);
-             productRepository.save(product);
-            return new ProductImageResponse(saved.getId(),saved.getImageUrl(),saved.getPrimary());
+            product.setImage(saved);
+            productRepository.save(product);
+
+            return new ProductImageResponse(
+                    saved.getId(),
+                    saved.getImageUrl(),
+                    saved.getPrimary()
+            );
 
         } catch (Exception e) {
-            throw new RuntimeException("Image upload failed");
+            e.printStackTrace();
+            throw new RuntimeException("Image upload failed", e);
         }
     }
 
