@@ -1,37 +1,36 @@
 package com.cartigo.cart.config;
 
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
-    @Value("${app.security.permit-all:true}")
-    private boolean permitAll;
+    private final JwtFilter jwtFilter;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .csrf(csrf->csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/cart/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .sessionManagement(sess ->
+                        sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
 
-        http.authorizeHttpRequests(auth -> {
-            // Always allow swagger + actuator
-            auth.requestMatchers(
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/v3/api-docs/**",
-                    "/actuator/health",
-                    "/actuator/info"
-            ).permitAll();
-
-            if (permitAll) auth.anyRequest().permitAll();
-            else auth.anyRequest().authenticated();
-        });
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
