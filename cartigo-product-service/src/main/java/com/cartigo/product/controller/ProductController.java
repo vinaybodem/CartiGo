@@ -4,6 +4,7 @@ import com.cartigo.product.dto.ProductUpdateRequest;
 import com.cartigo.product.common.ApiResponse;
 import com.cartigo.product.dto.ProductCreateRequest;
 import com.cartigo.product.dto.ProductResponse;
+import com.cartigo.product.dto.ResponseToInvetory;
 import com.cartigo.product.entity.Product;
 import com.cartigo.product.entity.ProductStatus;
 import com.cartigo.product.mapper.ProductMapper;
@@ -93,5 +94,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse<?>> delete(@PathVariable Long id) {
         service.deleteProducts(id);
         return new ResponseEntity<ApiResponse<?>>(ApiResponse.ok("Deleted", null),HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/validate/{pord_id}")
+    public ResponseToInvetory validate(@PathVariable Long pord_id) {
+        return  service.getProductIdAndSellerId(pord_id);
     }
 }

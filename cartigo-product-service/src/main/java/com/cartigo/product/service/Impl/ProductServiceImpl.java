@@ -2,9 +2,7 @@ package com.cartigo.product.service.Impl;
 
 import com.cartigo.product.client.CategoryClient;
 import com.cartigo.product.client.SellerClient;
-import com.cartigo.product.dto.ProductCreateRequest;
-import com.cartigo.product.dto.ProductUpdateRequest;
-import com.cartigo.product.dto.SellerDto;
+import com.cartigo.product.dto.*;
 import com.cartigo.product.entity.Product;
 import com.cartigo.product.entity.ProductStatus;
 import com.cartigo.product.exception.BadRequestException;
@@ -103,6 +101,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> searchProductsByName(String keyword) {
         return productRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
+    @Override
+    public ResponseToInvetory getProductIdAndSellerId(Long id) {
+        Product product = getProductById(id);
+        return new ResponseToInvetory(product.getId(), product.getSellerId());
     }
 
     @Override
