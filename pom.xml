@@ -37,6 +37,7 @@
 		<module>cartigo-auth-service</module>
 		<module>cartigo-user-service</module>
 		<module>cartigo-product-service</module>
+<!--		<module>cartigo-inventory-service</module>-->
 		<module>cartigo-inventory-service</module>
 		<module>cartigo-cart-service</module>
 		<module>cartigo-order-service</module>

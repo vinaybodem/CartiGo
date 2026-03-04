@@ -2,6 +2,7 @@ package com.cartigo.product.service;
 
 import com.cartigo.product.dto.ProductCreateRequest;
 import com.cartigo.product.dto.ProductUpdateRequest;
+import com.cartigo.product.dto.ResponseToInvetory;
 import com.cartigo.product.entity.Product;
 import com.cartigo.product.entity.ProductStatus;
 
@@ -27,6 +28,7 @@ public interface ProductService {
 
     List<Product> searchProductsByName(String keyword);
 
+    ResponseToInvetory getProductIdAndSellerId(Long id);
     void deleteProducts(Long id);
 
     Product setStatus(Long id, ProductStatus value);

@@ -45,6 +45,7 @@ public class SecurityConfig {
                         // seller routes
                         .pathMatchers(HttpMethod.POST,"/api/products/**").hasRole(Role.SELLER.name())
                         .pathMatchers(HttpMethod.GET,"/api/products/**").permitAll()
+                                .pathMatchers("/api/inventory/**").permitAll()
                         // everything else needs authentication
                         .anyExchange().authenticated()
                 )

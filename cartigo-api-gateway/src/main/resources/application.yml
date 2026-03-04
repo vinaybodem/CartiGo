@@ -66,7 +66,7 @@ spring:
 
             # Inventory service
             - id: inventory-service
-              uri: lb://cartigo-inventory-service
+              uri: lb://INVENTORY-SERVICE
               predicates:
                 - Path=/api/inventory/**
 
@@ -128,16 +128,16 @@ springdoc:
   swagger-ui:
     urls:
       - name: product-service
-        url: product-service/v3/api-docs
+        url: /product-service/v3/api-docs
 
       - name: category-service
-        url: category-service-swagger/v3/api-docs
+        url: /category-service-swagger/v3/api-docs
 
       - name: auth-service
-        url: auth-service-swagger/v3/api-docs
+        url: /auth-service-swagger/v3/api-docs
 
       - name: user-service
-        url: user-service/v3/api-docs
+        url: /user-service/v3/api-docs
 jwt:
   secret: ${JWT_SECRET:change-me-to-a-long-secret-change-me-to-a-long-secret}
   expirationMinutes: ${JWT_EXP_MINUTES:60}
