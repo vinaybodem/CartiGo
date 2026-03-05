@@ -1,7 +1,9 @@
 package com.cartigo.cart.service;
 
 import com.cartigo.cart.client.InventoryClient;
+import com.cartigo.cart.client.NotificationClient;
 import com.cartigo.cart.client.ProductClient;
+import com.cartigo.cart.config.SecurityUtils;
 import com.cartigo.cart.dto.*;
 import com.cartigo.cart.entity.Cart;
 import com.cartigo.cart.entity.CartItem;
@@ -24,17 +26,20 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final ProductClient productClient;
     private final InventoryClient inventoryClient;
+    private final NotificationClient notificationClient;
+
 
     public CartService(
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
             ProductClient productClient,
-            InventoryClient inventoryClient
+            InventoryClient inventoryClient, NotificationClient notificationClient
     ) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.productClient = productClient;
         this.inventoryClient = inventoryClient;
+        this.notificationClient = notificationClient;
     }
 
     @Transactional
@@ -89,7 +94,11 @@ public class CartService {
         item.setQuantity(updatedQty);
 
         cartItemRepository.save(item);
-
+        NotificationRequest request = new NotificationRequest();
+        request.setTo(SecurityUtils.getCurrentEmail());
+        request.setSubject("Cart Item Added");
+        request.setMessage("Cart Item Added Successfully");
+        notificationClient.sendEmail(request);
         return buildCartResponse(userId, cart.getId());
     }
 

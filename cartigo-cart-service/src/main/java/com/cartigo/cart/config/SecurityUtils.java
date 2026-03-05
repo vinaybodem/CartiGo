@@ -19,4 +19,18 @@ public class SecurityUtils {
         if(principal.getId()==null) throw new RuntimeException("Unauthorized request");
         return principal.getId();
     }
+    public static String getCurrentEmail() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null) {
+            throw new RuntimeException("Unauthenticated request");
+        }
+
+        AuthPrinciple principal = (AuthPrinciple) authentication.getPrincipal();
+
+        if(principal.getUsername()==null) throw new RuntimeException("Unauthorized request");
+        return principal.getUsername();
+    }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products/images")
+@RequestMapping("api/images")
 public class ProductImageController {
 
 

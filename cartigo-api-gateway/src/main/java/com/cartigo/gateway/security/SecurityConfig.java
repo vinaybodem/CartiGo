@@ -29,29 +29,31 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeExchange(exchanges -> exchanges
 
-                        // allow unauthenticated access for these endpoints
-                        .pathMatchers("/auth/**").permitAll()
-                        .pathMatchers("/actuator/**").permitAll()
-                        .pathMatchers("/swagger-ui/**").permitAll()
-                        .pathMatchers("/v3/api-docs/**").permitAll()      // OpenAPI spec
-                        .pathMatchers("/product-service/v3/api-docs/**").permitAll()
-                        .pathMatchers("/category-service-swagger/v3/api-docs/**").permitAll()
+                                // allow unauthenticated access for these endpoints
+                                .pathMatchers("/auth/**").permitAll()
+                                .pathMatchers("/actuator/**").permitAll()
+                                .pathMatchers("/swagger-ui/**").permitAll()
+                                .pathMatchers("/v3/api-docs/**").permitAll()      // OpenAPI spec
+                                .pathMatchers("/product-service/v3/api-docs/**").permitAll()
+                                .pathMatchers("/category-service-swagger/v3/api-docs/**").permitAll()
 //                        .pathMatchers("/auth-service/v3/api-docs/**").permitAll()
-                        .pathMatchers("/auth-service-swagger/v3/api-docs/**").permitAll()
-                        .pathMatchers("/user-service/v3/api-docs/**").permitAll()
-                        .pathMatchers("/inventory-service/v3/api-docs/**").permitAll()
-                        .pathMatchers("/cart-service/v3/api-docs/**").permitAll()
-                        .pathMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                                .pathMatchers("/auth-service-swagger/v3/api-docs/**").permitAll()
+                                .pathMatchers("/user-service/v3/api-docs/**").permitAll()
+                                .pathMatchers("/inventory-service/v3/api-docs/**").permitAll()
+                                .pathMatchers("/cart-service/v3/api-docs/**").permitAll()
+                                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        .pathMatchers("/webjars/**").permitAll()          // static JS/CSS assets
-                        .pathMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
-                        // seller routes
-                        .pathMatchers(HttpMethod.POST,"/api/products/**").hasRole(Role.SELLER.name())
-                        .pathMatchers(HttpMethod.GET,"/api/products/**").permitAll()
+                                .pathMatchers("/webjars/**").permitAll()          // static JS/CSS assets
+                                .pathMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
+                                // seller routes
+                                .pathMatchers(HttpMethod.POST, "/api/products/**").hasRole(Role.SELLER.name())
+                                .pathMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                                 .pathMatchers("/api/inventory/**").permitAll()
                                 .pathMatchers("/api/cart/**").hasRole(Role.CUSTOMER.name())
-                        // everything else needs authentication
-                        .anyExchange().authenticated()
+                                .pathMatchers("/api/users/**").hasRole(Role.ADMIN.name())
+
+                                // everything else needs authentication
+                                .anyExchange().authenticated()
                 )
 
                 // Add JWT filter before authentication
