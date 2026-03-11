@@ -12,33 +12,16 @@ services:
     volumes:
       - cartigo_mysql_data:/var/lib/mysql
 
-  redis:
-    image: redis:7
-    container_name: cartigo-redis
-    ports:
-      - "6379:6379"
-
-  opensearch:
-    image: opensearchproject/opensearch:2.15.0
-    container_name: cartigo-opensearch
-    environment:
-      - discovery.type=single-node
-      - plugins.security.disabled=true
-      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - "9200:9200"
-      - "9600:9600"
-
   config-server:
     build:
       context: .
-      dockerfile: Dockerfile.service
+      dockerfile: Dockerfile
       args:
         SERVICE: cartigo-config-server
     container_name: cartigo-config-server
     environment:
       SPRING_PROFILES_ACTIVE: native
-      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:/config-repo
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:///D:/CartiGo/CartiGo/config-repo
     volumes:
       - ./config-repo:/config-repo:ro
     ports:
@@ -46,254 +29,254 @@ services:
     depends_on:
       - mysql
 
-  service-registry:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-service-registry
-    container_name: cartigo-service-registry
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "8761:8761"
-    depends_on:
-      - config-server
-
-  api-gateway:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-api-gateway
-    container_name: cartigo-api-gateway
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "8080:8080"
-    depends_on:
-      - service-registry
-
-  auth-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-auth-service
-    container_name: cartigo-auth-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-      CARTIGO_BOOTSTRAP_ADMIN_EMAIL: admin@cartigo.com
-      CARTIGO_BOOTSTRAP_ADMIN_PASSWORD: Admin@123
-    ports:
-      - "9001:9001"
-    depends_on:
-      - mysql
-      - service-registry
-
-  user-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-user-service
-    container_name: cartigo-user-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9002:9002"
-    depends_on:
-      - mysql
-      - service-registry
-
-  product-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-product-service
-    container_name: cartigo-product-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9003:9003"
-    depends_on:
-      - mysql
-      - service-registry
-
-  inventory-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-inventory-service
-    container_name: cartigo-inventory-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9004:9004"
-    depends_on:
-      - mysql
-      - service-registry
-
-  cart-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-cart-service
-    container_name: cartigo-cart-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9014:9014"
-    depends_on:
-      - mysql
-      - redis
-      - service-registry
-
-  order-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-order-service
-    container_name: cartigo-order-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9005:9005"
-    depends_on:
-      - mysql
-      - service-registry
-
-  payment-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-payment-service
-    container_name: cartigo-payment-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-      RAZORPAY_KEY_ID: ""
-      RAZORPAY_KEY_SECRET: ""
-      RAZORPAY_WEBHOOK_SECRET: ""
-    ports:
-      - "9006:9006"
-    depends_on:
-      - mysql
-      - service-registry
-
-  review-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-review-service
-    container_name: cartigo-review-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9007:9007"
-    depends_on:
-      - mysql
-      - service-registry
-
-  return-refund-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-return-refund-service
-    container_name: cartigo-return-refund-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9008:9008"
-    depends_on:
-      - mysql
-      - service-registry
-
-  admin-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-admin-service
-    container_name: cartigo-admin-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9009:9009"
-    depends_on:
-      - mysql
-      - service-registry
-
-  # Optional services (enable later if you want)
-  search-service:
-    profiles: ["optional"]
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-search-service
-    container_name: cartigo-search-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9013:9013"
-    depends_on:
-      - mysql
-      - opensearch
-      - service-registry
-
-  notification-service:
-    profiles: ["optional"]
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-notification-service
-    container_name: cartigo-notification-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9011:9011"
-    depends_on:
-      - mysql
-      - service-registry
-
-  reporting-analytics-service:
-    profiles: ["optional"]
-    build:
-      context: .
-      dockerfile: Dockerfile.service
-      args:
-        SERVICE: cartigo-reporting-analytics-service
-    container_name: cartigo-reporting-analytics-service
-    environment:
-      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "9010:9010"
-    depends_on:
-      - mysql
-      - service-registry
+#  service-registry:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-service-registry
+#    container_name: cartigo-service-registry
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "8761:8761"
+#    depends_on:
+#      - config-server
+#
+#  api-gateway:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-api-gateway
+#    container_name: cartigo-api-gateway
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - service-registry
+#
+#  auth-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-auth-service
+#    container_name: cartigo-auth-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#      CARTIGO_BOOTSTRAP_ADMIN_EMAIL: admin@cartigo.com
+#      CARTIGO_BOOTSTRAP_ADMIN_PASSWORD: Admin@123
+#    ports:
+#      - "9001:9001"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  user-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-user-service
+#    container_name: cartigo-user-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9002:9002"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  product-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-product-service
+#    container_name: cartigo-product-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9003:9003"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  inventory-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-inventory-service
+#    container_name: cartigo-inventory-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9004:9004"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  cart-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-cart-service
+#    container_name: cartigo-cart-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9014:9014"
+#    depends_on:
+#      - mysql
+#      - redis
+#      - service-registry
+#
+#  order-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-order-service
+#    container_name: cartigo-order-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9005:9005"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  payment-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-payment-service
+#    container_name: cartigo-payment-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#      RAZORPAY_KEY_ID: ""
+#      RAZORPAY_KEY_SECRET: ""
+#      RAZORPAY_WEBHOOK_SECRET: ""
+#    ports:
+#      - "9006:9006"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  review-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-review-service
+#    container_name: cartigo-review-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9007:9007"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  return-refund-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-return-refund-service
+#    container_name: cartigo-return-refund-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9008:9008"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  admin-service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-admin-service
+#    container_name: cartigo-admin-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9009:9009"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  # Optional services (enable later if you want)
+#  search-service:
+#    profiles: ["optional"]
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-search-service
+#    container_name: cartigo-search-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9013:9013"
+#    depends_on:
+#      - mysql
+#      - opensearch
+#      - service-registry
+#
+#  notification-service:
+#    profiles: ["optional"]
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-notification-service
+#    container_name: cartigo-notification-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9011:9011"
+#    depends_on:
+#      - mysql
+#      - service-registry
+#
+#  reporting-analytics-service:
+#    profiles: ["optional"]
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        SERVICE: cartigo-reporting-analytics-service
+#    container_name: cartigo-reporting-analytics-service
+#    environment:
+#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
+#      SPRING_PROFILES_ACTIVE: docker
+#    ports:
+#      - "9010:9010"
+#    depends_on:
+#      - mysql
+#      - service-registry
 
 volumes:
   cartigo_mysql_data:

@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/cart/**").authenticated()
+                        .requestMatchers("/api/cart/order/checkout/validate").hasRole("CUSTOMER")
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(sess ->

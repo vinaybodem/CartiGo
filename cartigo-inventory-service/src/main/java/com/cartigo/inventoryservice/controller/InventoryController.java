@@ -23,7 +23,7 @@ public class InventoryController {
             @RequestParam Integer totalStock, HttpServletRequest request) {
 
         return ApiResponse.ok(
-                "Inventory updated",
+                   "Inventory updated",
                 inventoryService.createOrUpdate(productId, totalStock,request)
         );
     }
@@ -66,8 +66,8 @@ public class InventoryController {
     }
 
     @GetMapping("/available/{productId}")
-    Boolean checkAvailability(@PathVariable Long productId){
-       return inventoryService.checkAvailability(productId);
+    Boolean checkAvailability(@PathVariable Long productId, @RequestParam Integer quantity){
+       return inventoryService.checkAvailability(productId,quantity);
     }
 }
 
