@@ -16,7 +16,6 @@
 	<artifactId>cartigo-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
 	<name>cartigo-backend</name>
 	<description>Cartigo Microservices Backend (Parent Aggregator)</description>
 

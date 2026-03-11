@@ -70,7 +70,7 @@ public class CartService {
         }
 
         // Check inventory availability
-        Boolean available = inventoryClient.checkAvailability(req.getProductId());
+        Boolean available = inventoryClient.checkAvailability(req.getProductId(),req.getQuantity());
         if (Boolean.FALSE.equals(available)) {
             throw new BadRequestException("Requested quantity not available in inventory");
         }
@@ -118,7 +118,7 @@ public class CartService {
             cartItemRepository.delete(item);
         } else {
 
-            Boolean available = inventoryClient.checkAvailability(productId);
+            Boolean available = inventoryClient.checkAvailability(productId,req.getQuantity());
 
             if (Boolean.FALSE.equals(available)) {
                 throw new BadRequestException("Requested quantity not available");
@@ -182,7 +182,7 @@ public class CartService {
         for (CartItem item : items) {
 
             Boolean available = inventoryClient.checkAvailability(
-                    item.getProductId()
+                    item.getProductId(), item.getQuantity()
             );
 
             if (Boolean.FALSE.equals(available)) {
