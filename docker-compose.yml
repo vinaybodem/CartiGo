@@ -1,17 +1,19 @@
-version: "3.9"
-
 services:
   mysql:
     image: mysql:8.4
     container_name: cartigo-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root123
     ports:
       - "3306:3306"
-    command: ["--default-authentication-plugin=mysql_native_password"]
     volumes:
       - cartigo_mysql_data:/var/lib/mysql
-
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
   config-server:
     build:
       context: .
@@ -19,129 +21,243 @@ services:
       args:
         SERVICE: cartigo-config-server
     container_name: cartigo-config-server
-    environment:
-      SPRING_PROFILES_ACTIVE: native
-      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:///D:/CartiGo/CartiGo/config-repo
     volumes:
       - ./config-repo:/config-repo:ro
     ports:
       - "8888:8888"
     depends_on:
-      - mysql
+        mysql:
+          condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
-#  service-registry:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-service-registry
-#    container_name: cartigo-service-registry
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "8761:8761"
-#    depends_on:
-#      - config-server
-#
-#  api-gateway:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-api-gateway
-#    container_name: cartigo-api-gateway
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - service-registry
-#
-#  auth-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-auth-service
-#    container_name: cartigo-auth-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#      CARTIGO_BOOTSTRAP_ADMIN_EMAIL: admin@cartigo.com
-#      CARTIGO_BOOTSTRAP_ADMIN_PASSWORD: Admin@123
-#    ports:
-#      - "9001:9001"
-#    depends_on:
-#      - mysql
-#      - service-registry
-#
-#  user-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-user-service
-#    container_name: cartigo-user-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9002:9002"
-#    depends_on:
-#      - mysql
-#      - service-registry
-#
-#  product-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-product-service
-#    container_name: cartigo-product-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9003:9003"
-#    depends_on:
-#      - mysql
-#      - service-registry
-#
-#  inventory-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-inventory-service
-#    container_name: cartigo-inventory-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9004:9004"
-#    depends_on:
-#      - mysql
-#      - service-registry
-#
-#  cart-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-cart-service
-#    container_name: cartigo-cart-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9014:9014"
-#    depends_on:
-#      - mysql
-#      - redis
-#      - service-registry
-#
+  service-registry:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-service-registry
+    container_name: cartigo-service-registry
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8761:8761"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-auth-service
+    container_name: cartigo-auth-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_APP_PASSWORD: ${MAIL_APP_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8081:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-user-service
+    container_name: cartigo-user-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8082:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-product-service
+    container_name: cartigo-product-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8083:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+  cartigo-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-category-service
+    container_name: cartigo-category-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8084:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  inventory-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-inventory-service
+    container_name: cartigo-inventory-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8085:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  cart-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-cart-service
+    container_name: cartigo-cart-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8086:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+
+
+  notification-service:
+    profiles: ["optional"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-notification-service
+    container_name: cartigo-notification-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_APP_PASSWORD: ${MAIL_APP_PASSWORD}
+    ports:
+      - "8087:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-api-gateway
+    container_name: cartigo-api-gateway
+    environment:
+        SPRING_PROFILES_ACTIVE: docker
+    ports:
+        - "8080:8080"
+    depends_on:
+        service-registry:
+          condition: service_healthy
 #  order-service:
 #    build:
 #      context: .
@@ -208,75 +324,8 @@ services:
 #    depends_on:
 #      - mysql
 #      - service-registry
-#
-#  admin-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-admin-service
-#    container_name: cartigo-admin-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9009:9009"
-#    depends_on:
-#      - mysql
-#      - service-registry
-#
-#  # Optional services (enable later if you want)
-#  search-service:
-#    profiles: ["optional"]
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-search-service
-#    container_name: cartigo-search-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9013:9013"
-#    depends_on:
-#      - mysql
-#      - opensearch
-#      - service-registry
-#
-#  notification-service:
-#    profiles: ["optional"]
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-notification-service
-#    container_name: cartigo-notification-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9011:9011"
-#    depends_on:
-#      - mysql
-#      - service-registry
-#
-#  reporting-analytics-service:
-#    profiles: ["optional"]
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-reporting-analytics-service
-#    container_name: cartigo-reporting-analytics-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9010:9010"
-#    depends_on:
-#      - mysql
-#      - service-registry
+
+
 
 volumes:
   cartigo_mysql_data:

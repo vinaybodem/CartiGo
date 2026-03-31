@@ -1,28 +1,28 @@
-# Generic Dockerfile for any Cartigo service module
-# Usage example:
-#   docker build -f Dockerfile.service --build-arg SERVICE=cartigo-auth-service -t cartigo-auth-service:latest .
+# ---------- BUILD STAGE ----------
+FROM maven:3.9-eclipse-temurin-25 AS builder
 
-ARG SERVICE
-
-FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /build
 
-# Copy the whole repo (simple + reliable). For faster builds you can optimize later.
+# copy entire project
 COPY . .
 
-# Build only the requested module (and its dependencies)
-RUN mvn -q -DskipTests -pl ${SERVICE} -am package
+# choose service to build
+ARG SERVICE
 
-FROM eclipse-temurin:17-jre
+# build only required module + dependencies
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -pl ${SERVICE} -am clean package -DskipTests
+
+
+# ---------- RUNTIME STAGE ----------
+FROM eclipse-temurin:25-jdk-alpine
+
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 ARG SERVICE
 
-# Copy the built jar (Spring Boot repackage output)
-COPY --from=build /build/${SERVICE}/target/*.jar /app/app.jar
+COPY --from=builder /build/${SERVICE}/target/*.jar app.jar
 
-EXPOSE 8080
-
-ENV JAVA_OPTS=""
-
-ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

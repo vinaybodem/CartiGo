@@ -1,19 +1,19 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
-  application:
-    name: auth-service
   datasource:
-    url: jdbc:mysql://mysql:3306/cartigo_auth?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/cartigo_auth_db?createDatabaseIfNotExist=true
     username: root
-    password: root123
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  #  ${DB_PASSWORD:root}
   jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
+    show-sql: true
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -25,10 +25,11 @@ spring:
           auth: true
           starttls:
             enable: true
+
 jwt:
   secret: "change-me-to-a-long-secret-change-me-to-a-long-secret"
   expirationMinutes: ${JWT_EXP_MINUTES:60}
-#${JWT_SECRET}
+
 #  ${JWT_SECRET:change-me-to-a-long-secret-change-me-to-a-long-secret}
 management:
   endpoints:
@@ -39,6 +40,10 @@ management:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_URL:http://service-registry:8761/eureka}
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
   instance:
     prefer-ip-address: true
+# For local dev, allow calling user-service without auth (gateway will protect externally)
+cartigo:
+  user-service:
+    enabled: true

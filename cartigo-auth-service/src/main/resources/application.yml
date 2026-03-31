@@ -1,52 +1,6 @@
-server:
-  port: 8081
 
 spring:
   application:
-    name: cartigo-auth-service
-  config:
-    import: optional:configserver:http://localhost:8888
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/cartigo_auth_db?createDatabaseIfNotExist=true
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-#  ${DB_PASSWORD:root}
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_APP_PASSWORD:}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-jwt:
-  secret: "change-me-to-a-long-secret-change-me-to-a-long-secret"
-  expirationMinutes: ${JWT_EXP_MINUTES:60}
-
-#  ${JWT_SECRET:change-me-to-a-long-secret-change-me-to-a-long-secret}
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
-
-# For local dev, allow calling user-service without auth (gateway will protect externally)
-cartigo:
-  user-service:
-    enabled: true
+    name: auth-service
+  profiles:
+    active: dev

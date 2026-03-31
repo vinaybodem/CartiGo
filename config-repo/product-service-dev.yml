@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8083
 
 spring:
   servlet:
@@ -8,9 +8,9 @@ spring:
       max-file-size: 20MB
       max-request-size: 20MB
   datasource:
-    url: jdbc:mysql://mysql:3306/cartigo_product?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/cartigo_product?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: root123
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -21,6 +21,6 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://service-registry:8761/eureka
+      defaultZone: http://localhost:8761/eureka
   instance:
     prefer-ip-address: true
