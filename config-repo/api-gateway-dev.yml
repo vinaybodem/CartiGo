@@ -76,17 +76,6 @@ spring:
               predicates:
                 - Path=/api/payments/**
 
-            # Review service
-            - id: review-service
-              uri: lb://cartigo-review-service
-              predicates:
-                - Path=/api/reviews/**
-
-            # Return/Refund service (your controller is /api/returns/**)
-            - id: return-refund-service
-              uri: lb://cartigo-return-refund-service
-              predicates:
-                - Path=/api/returns/**
 
             - id: category-service-swagger
               uri: lb://CARTIGO-CATEGORY-SERVICE
@@ -132,6 +121,12 @@ springdoc:
 
       - name: cart-service
         url: /cart-service/v3/api-docs
+
+      - name: order-service
+        url: /order-service/v3/api-docs
+
+      - name: payment-service
+        url: /payment-service/v3/api-docs
 jwt:
   secret: ${JWT_SECRET:change-me-to-a-long-secret-change-me-to-a-long-secret}
   expirationMinutes: ${JWT_EXP_MINUTES:60}

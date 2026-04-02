@@ -37,7 +37,15 @@ public class    UserService {
         if (req.getId() == null) {
             throw new BadRequestException("id is required");
         }
+        // ✅ FIRST: idempotent check
+        if (userRepository.existsById(req.getId())) {
+            return getUser(req.getId());
+        }
 
+        // ✅ THEN validate email
+        if (req.getEmail() == null || req.getEmail().isBlank()) {
+            throw new BadRequestException("email is required");
+        }
         String normalizedEmail = req.getEmail().trim().toLowerCase();
 
         // if id already exists, return it (idempotent)

@@ -12,7 +12,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
+jwt:
+  secret: "change-me-to-a-long-secret-change-me-to-a-long-secret"
 #razorpay:
 #  key-id: ${RAZORPAY_KEY_ID}
 #  key-secret: ${RAZORPAY_KEY_SECRET}

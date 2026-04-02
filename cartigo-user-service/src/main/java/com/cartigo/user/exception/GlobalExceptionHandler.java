@@ -44,4 +44,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiError(500, ex.getMessage(), req.getRequestURI()));
     }
+
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ApiError> handleDB(org.springframework.dao.DataIntegrityViolationException ex,
+                                             HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiError(409, "Duplicate or invalid data", req.getRequestURI()));
+    }
 }
