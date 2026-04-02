@@ -131,6 +131,6 @@ public class Product {
     }
 
     public void setImage( ProductImage image) {
-        this.images = images;
+        this.images = image;
     }
 }

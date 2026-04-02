@@ -30,8 +30,8 @@ public class ProductServiceImpl implements ProductService {
 
         SellerDto seller = sellerClient.getSellerById(request.getSellerId());
 
-        if(seller == null) throw new RuntimeException("Invalid Seller");
-        if(!categoryClient.isCategoryValid(request.getCategoryId())) throw new RuntimeException("Invalid Category");
+        if(seller == null) throw new BadRequestException("Invalid Seller");
+        if(!categoryClient.isCategoryValid(request.getCategoryId())) throw new BadRequestException("Invalid Category");
         if (productRepository.existsBySku(request.getSku())) {
             throw new BadRequestException("SKU already exists");
         }

@@ -24,7 +24,7 @@ public class ProductCreateRequest {
     @NotBlank
     private String sku;
 
-    @NotBlank
+    @NotNull
     private ProductImage image;
 
     @NotNull
