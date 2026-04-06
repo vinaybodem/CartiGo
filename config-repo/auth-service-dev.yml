@@ -35,7 +35,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+    export:             # <--- Changed structure
+      enabled: true     # <--- General tracing export enabled (replaces management.tracing.enabled)
+      zipkin:           # <--- Zipkin specific export config
+        enabled: true
+        endpoint: http://localhost:9411/api/v2/spans  # <--- Replaces management.zipkin.tracing.endpoint
 
 eureka:
   client:
