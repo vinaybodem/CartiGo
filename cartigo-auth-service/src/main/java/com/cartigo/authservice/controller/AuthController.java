@@ -7,6 +7,7 @@ import com.cartigo.authservice.repository.UserRepository;
 import com.cartigo.authservice.service.AuthService;
 import com.cartigo.authservice.service.EmailService;
 import com.cartigo.authservice.service.OtpService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class AuthController {
     }
 
     // REGISTER via OTP
+    @Transactional
     @PostMapping("/register/send-otp")
     public String sendRegisterOtp(@Valid @RequestBody RegisterRequest req) {
 

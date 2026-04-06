@@ -1,4 +1,4 @@
-package com.cartigo.user.dto;
+package com.cartigo.authservice.client.dto;
 
 import com.cartigo.authservice.client.dto.Role;
 import jakarta.validation.constraints.Email;

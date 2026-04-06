@@ -13,9 +13,9 @@ public class Inventory {
 
     private Long productId;
 
-    private Integer totalStock;
-    private Integer reservedStock;
-    private Integer availableStock;
+    private Integer totalStock = 0;
+    private Integer reservedStock = 0;
+    private Integer availableStock = 0;
 
     private Boolean isActive = true;
 

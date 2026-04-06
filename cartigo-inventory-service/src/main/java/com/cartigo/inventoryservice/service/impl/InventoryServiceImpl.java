@@ -34,13 +34,14 @@ public class InventoryServiceImpl implements InventoryService {
 
         System.out.println("SellerId: " + sellerId + "productId:"+product.getSellerId());
         System.out.println(product.getId());
-        if (product.getSellerId() != sellerId) {
+        if (!product.getSellerId().equals(sellerId)) {
             throw new RuntimeException("Not allowed");
         }
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElse(new Inventory(productId,0) );
 
-        inventory.setTotalStock(inventory.getTotalStock()+totalStock);
+        Integer currentStock = inventory.getTotalStock() == null ? 0 : inventory.getTotalStock();
+        inventory.setTotalStock(currentStock + totalStock);
         inventory.setAvailableStock(
                  inventory.getTotalStock()
         );
@@ -68,14 +69,18 @@ public class InventoryServiceImpl implements InventoryService {
         if (product == null) {
             throw new ResourceNotFoundException("Product not found");
         }
+
         Inventory inventory = getByProductId(productId);
 
-        if (inventory.getAvailableStock() < quantity) {
+        int available = inventory.getAvailableStock() == null ? 0 : inventory.getAvailableStock();
+        int reserved = inventory.getReservedStock() == null ? 0 : inventory.getReservedStock();
+
+        if (available < quantity) {
             throw new RuntimeException("Insufficient stock");
         }
 
-        inventory.setReservedStock(inventory.getReservedStock() + quantity);
-        inventory.setAvailableStock(inventory.getAvailableStock() - quantity);
+        inventory.setReservedStock(reserved + quantity);
+        inventory.setAvailableStock(available - quantity);
 
         inventoryRepository.save(inventory);
     }
@@ -87,10 +92,18 @@ public class InventoryServiceImpl implements InventoryService {
         if (product == null) {
             throw new ResourceNotFoundException("Product not found");
         }
+
         Inventory inventory = getByProductId(productId);
 
-        inventory.setReservedStock(inventory.getReservedStock() - quantity);
-        inventory.setAvailableStock(inventory.getAvailableStock() + quantity);
+        int reserved = inventory.getReservedStock() == null ? 0 : inventory.getReservedStock();
+        int available = inventory.getAvailableStock() == null ? 0 : inventory.getAvailableStock();
+
+        if (reserved < quantity) {
+            throw new RuntimeException("Cannot release more than reserved stock");
+        }
+
+        inventory.setReservedStock(reserved - quantity);
+        inventory.setAvailableStock(available + quantity);
 
         inventoryRepository.save(inventory);
     }

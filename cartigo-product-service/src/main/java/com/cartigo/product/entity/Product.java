@@ -29,8 +29,8 @@ public class Product {
 
         private LocalDateTime createdAt = LocalDateTime.now();
 
-        @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-        private ProductImage images ;
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductImage image; // rename from images → image
 
     @PrePersist
     public void onCreate() {
@@ -127,10 +127,10 @@ public class Product {
     }
 
     public ProductImage getImage() {
-        return images;
+        return image;
     }
 
-    public void setImage( ProductImage image) {
-        this.images = image;
+    public void setImage(ProductImage image) {
+        this.image = image;
     }
 }

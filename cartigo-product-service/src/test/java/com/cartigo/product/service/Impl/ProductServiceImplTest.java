@@ -1,4 +1,4 @@
-package com.cartigo.product.service;
+package com.cartigo.product.service.Impl;
 
 import com.cartigo.product.client.CategoryClient;
 import com.cartigo.product.client.SellerClient;

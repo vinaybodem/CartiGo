@@ -24,8 +24,8 @@ public class ProductCreateRequest {
     @NotBlank
     private String sku;
 
-    @NotNull
-    private ProductImage image;
+//    @NotNull
+//    private ProductImageRequest image;
 
     @NotNull
     private Long categoryId;
@@ -57,8 +57,13 @@ public class ProductCreateRequest {
     public String getSku() { return sku; }
     public void setSku(String sku) { this.sku = sku; }
 
-    public ProductImage getImage() { return image; }
-    public void setImageUrl(ProductImage imageUrl) { this.image = image; }
+//    public ProductImageRequest getImage() {
+//        return image;
+//    }
+//
+//    public void setImage(ProductImageRequest image) {
+//        this.image = image;
+//    }
 
     public Long getCategoryId() { return categoryId; }
     public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }

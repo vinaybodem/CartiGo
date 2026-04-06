@@ -17,7 +17,7 @@ public class ProductImage {
     @JoinColumn(
             name = "product_id",
             nullable = false,
-            unique = true   // VERY IMPORTANT
+            unique = true
     )
     @JsonIgnore
     private Product product;
@@ -25,11 +25,10 @@ public class ProductImage {
     public ProductImage() {
     }
 
-    public ProductImage(Long id, String imageUrl, Boolean isPrimary, Product product) {
+    public ProductImage(Long id, String imageUrl, Boolean isPrimary) {
         this.id = id;
         this.imageUrl = imageUrl;
         this.isPrimary = isPrimary;
-        //this.product = product;
     }
 
     public Long getId() {

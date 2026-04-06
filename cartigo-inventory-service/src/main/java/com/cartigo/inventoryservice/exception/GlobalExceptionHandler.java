@@ -11,4 +11,9 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> handleNotFound(ResourceNotFoundException ex){
         return ApiResponse.fail(ex.getMessage());
     }
+
+    @ExceptionHandler(Exception.class)
+    public ApiResponse<?> handleAnyException(Exception ex){
+        return ApiResponse.fail(ex.getMessage());
+    }
 }

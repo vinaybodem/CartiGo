@@ -4,6 +4,7 @@ import com.cartigo.product.client.CategoryClient;
 import com.cartigo.product.client.SellerClient;
 import com.cartigo.product.dto.*;
 import com.cartigo.product.entity.Product;
+import com.cartigo.product.entity.ProductImage;
 import com.cartigo.product.entity.ProductStatus;
 import com.cartigo.product.exception.BadRequestException;
 import com.cartigo.product.exception.ResourceNotFoundException;
@@ -42,10 +43,19 @@ public class ProductServiceImpl implements ProductService {
         p.setDiscountPrice(request.getDiscountPrice());
         p.setBrand(request.getBrand());
         p.setSku(request.getSku());
-        p.setImage(request.getImage());
         p.setCategoryId(request.getCategoryId());
         p.setSellerId(request.getSellerId());
         p.setStatus(ProductStatus.ACTIVE);
+
+//        //  DTO → ENTITY conversion
+//        ProductImage img = new ProductImage();
+//        img.setImageUrl(request.getImage().getImageUrl());
+//        img.setPrimary(request.getImage().getIsPrimary());
+//
+//        // BI-DIRECTIONAL LINK (VERY IMPORTANT)
+//        img.setProduct(p);
+//        p.setImage(img);
+
         return productRepository.save(p);
     }
 
