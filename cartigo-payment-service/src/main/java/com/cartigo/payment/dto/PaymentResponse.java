@@ -8,8 +8,8 @@ public class PaymentResponse {
 
     private PaymentStatus status;
 
-    private String stripePaymentIntentId;
-    private String clientSecret;
+    private String razorpayOrderId;
+    private String amount;
 
     // getters setters
 
@@ -29,19 +29,19 @@ public class PaymentResponse {
         this.status = status;
     }
 
-    public String getStripePaymentIntentId() {
-        return stripePaymentIntentId;
+    public String getRazorpayOrderId() {
+        return razorpayOrderId;
     }
 
-    public void setStripePaymentIntentId(String stripePaymentIntentId) {
-        this.stripePaymentIntentId = stripePaymentIntentId;
+    public void setRazorpayOrderId(String razorpayOrderId) {
+        this.razorpayOrderId = razorpayOrderId;
     }
 
-    public String getClientSecret() {
-        return clientSecret;
+    public String getAmount() {
+        return amount;
     }
 
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
+    public void setAmount(String amount) {
+        this.amount = amount;
     }
 }

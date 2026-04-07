@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "CARTIGO-ORDER-SERVICE")
+@FeignClient(name = "ORDER-SERVICE")
 public interface OrderClient {
 
     @PostMapping("/api/orders/confirm/{orderId}")

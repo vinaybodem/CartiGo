@@ -36,6 +36,8 @@ public class SecurityConfig {
                                 .pathMatchers("/v3/api-docs/**").permitAll()      // OpenAPI spec
                                 .pathMatchers("/product-service/v3/api-docs/**").permitAll()
                                 .pathMatchers("/category-service-swagger/v3/api-docs/**").permitAll()
+                                .pathMatchers("/order-service-swagger/v3/api-docs/**").permitAll()
+                                .pathMatchers("/payment-service-swagger/v3/api-docs/**").permitAll()
 //                        .pathMatchers("/auth-service/v3/api-docs/**").permitAll()
                                 .pathMatchers("/auth-service-swagger/v3/api-docs/**").permitAll()
                                 .pathMatchers("/user-service/v3/api-docs/**").permitAll()

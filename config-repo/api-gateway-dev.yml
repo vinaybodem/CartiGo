@@ -16,6 +16,8 @@ spring:
             corsConfigurations:
               '[/**]':
                 allowedOrigins:
+                  - http://127.0.0.1:5500
+                  - http://localhost:5500
                   - http://localhost:8080
                 allowedMethods:
                   - GET
@@ -66,16 +68,28 @@ spring:
 
             # Order service
             - id: order-service
-              uri: lb://cartigo-order-service
+              uri: lb://order-service
               predicates:
                 - Path=/api/orders/**
 
             # Payment service
             - id: payment-service
-              uri: lb://cartigo-payment-service
+              uri: lb://payment-service
               predicates:
                 - Path=/api/payments/**
 
+            - id: order-service-swagger
+              uri: lb://order-service
+              predicates:
+                - Path=/order-service-swagger/v3/api-docs
+              filters:
+                - StripPrefix=1
+            - id: payment-service-swagger
+              uri: lb://payment-service
+              predicates:
+                - Path=/payment-service-swagger/v3/api-docs
+              filters:
+                - StripPrefix=1
 
             - id: category-service-swagger
               uri: lb://CARTIGO-CATEGORY-SERVICE
@@ -132,10 +146,10 @@ springdoc:
         url: /cart-service/v3/api-docs
 
       - name: order-service
-        url: /order-service/v3/api-docs
+        url: /order-service-swagger/v3/api-docs
 
       - name: payment-service
-        url: /payment-service/v3/api-docs
+        url: /payment-service-swagger/v3/api-docs
 jwt:
   secret: ${JWT_SECRET:change-me-to-a-long-secret-change-me-to-a-long-secret}
   expirationMinutes: ${JWT_EXP_MINUTES:60}
