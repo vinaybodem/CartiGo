@@ -2,6 +2,7 @@ package com.cartigo.payment.controller;
 
 import com.cartigo.payment.dto.PaymentRequest;
 import com.cartigo.payment.dto.PaymentResponse;
+import com.cartigo.payment.dto.PaymentVerifyRequest;
 import com.cartigo.payment.service.PaymentService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +24,9 @@ public class PaymentController {
 
     @PostMapping("/verify")
     public PaymentResponse verify(
-            @RequestParam String paymentIntentId
+            @RequestBody PaymentVerifyRequest request
     ){
 
-        return service.verifyPayment(paymentIntentId);
+        return service.verifyPayment(request);
     }
 }

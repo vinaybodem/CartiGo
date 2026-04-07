@@ -12,6 +12,13 @@ spring:
           auth: true
           starttls:
             enable: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 eureka:
   client:
@@ -36,3 +43,5 @@ management:
       zipkin:
         enabled: true
         endpoint: http://localhost:9411/api/v2/spans
+
+
