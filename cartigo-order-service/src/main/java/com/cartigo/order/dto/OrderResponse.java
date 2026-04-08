@@ -16,16 +16,9 @@ public class OrderResponse {
 
     private LocalDateTime createdAt;
 
-    private String paymentIntentId;
+    private String razorpayOrderId;
     private String paymentStatus;
 
-    public String getPaymentIntentId() {
-        return paymentIntentId;
-    }
-
-    public void setPaymentIntentId(String paymentIntentId) {
-        this.paymentIntentId = paymentIntentId;
-    }
 
     public String getPaymentStatus() {
         return paymentStatus;
@@ -43,12 +36,12 @@ public class OrderResponse {
     public OrderResponse() {
     }
 
-    public OrderResponse(Long orderId, BigDecimal totalAmount, OrderStatus status, LocalDateTime createdAt, String paymentIntentId, String paymentStatus, List<OrderItemResponse> items) {
+    public OrderResponse(Long orderId, BigDecimal totalAmount, OrderStatus status, LocalDateTime createdAt, String razorpayOrderId, String paymentStatus, List<OrderItemResponse> items) {
         this.orderId = orderId;
         this.totalAmount = totalAmount;
         this.status = status;
         this.createdAt = createdAt;
-        this.paymentIntentId = paymentIntentId;
+        this.razorpayOrderId = razorpayOrderId;
         this.paymentStatus = paymentStatus;
         this.items = items;
     }
@@ -61,8 +54,16 @@ public class OrderResponse {
         this.orderId = orderId;
     }
 
-    public BigDecimal getTotalAmount() {
+    public BigDecimal getAmount() {
         return totalAmount;
+    }
+
+    public String getRazorpayOrderId() {
+        return razorpayOrderId;
+    }
+
+    public void setRazorpayOrderId(String razorpayOrderId) {
+        this.razorpayOrderId = razorpayOrderId;
     }
 
     public void setTotalAmount(BigDecimal totalAmount) {
