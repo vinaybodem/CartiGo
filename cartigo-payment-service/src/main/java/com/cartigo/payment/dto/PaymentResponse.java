@@ -9,7 +9,7 @@ public class PaymentResponse {
     private PaymentStatus status;
 
     private String razorpayOrderId;
-    private String amount;
+    private String totalAmount;
 
     // getters setters
 
@@ -37,11 +37,11 @@ public class PaymentResponse {
         this.razorpayOrderId = razorpayOrderId;
     }
 
-    public String getAmount() {
-        return amount;
+    public String getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setAmount(String amount) {
-        this.amount = amount;
+    public void setTotalAmount(String totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

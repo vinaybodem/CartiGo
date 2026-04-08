@@ -19,7 +19,7 @@ public class PaymentNotificationConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topics = "payment-success-topic", groupId = "notification-group")
+    @KafkaListener(topics = {"payment-success-topic", "payment-failed-topic"}, groupId = "notification-group")
     public void consumePaymentSuccessEvent(String payload) {
 //        System.out.println("==================================================");
 //        System.out.println("KAFKA NOTIFICATION TRIGGERED");

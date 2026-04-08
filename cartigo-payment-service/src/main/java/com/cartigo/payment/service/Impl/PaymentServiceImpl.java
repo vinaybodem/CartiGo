@@ -53,7 +53,7 @@ public class PaymentServiceImpl implements PaymentService {
             Payment payment = new Payment();
             payment.setOrderId(request.getOrderId());
             payment.setUserId(SecurityUtils.getCurrentUserId());
-            payment.setAmount(request.getAmount());
+            payment.setTotalAmount(request.getTotalAmount());
             payment.setPaymentMethod(PaymentMethod.COD);
             payment.setPaymentStatus(PaymentStatus.SUCCESS);
 
@@ -90,7 +90,7 @@ public class PaymentServiceImpl implements PaymentService {
         ---------------------------------------
          */
         try {
-            long amountInPaise = request.getAmount().multiply(new BigDecimal(100)).longValue();
+            long amountInPaise = request.getTotalAmount().multiply(new BigDecimal(100)).longValue();
 
             JSONObject options = new JSONObject();
             options.put("amount", amountInPaise);
@@ -101,7 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
             Payment payment = new Payment();
             payment.setOrderId(request.getOrderId());
             payment.setUserId(SecurityUtils.getCurrentUserId());
-            payment.setAmount(request.getAmount());
+            payment.setTotalAmount(request.getTotalAmount());
             payment.setPaymentMethod(PaymentMethod.ONLINE);
             payment.setPaymentStatus(PaymentStatus.PENDING);
             payment.setRazorpayOrderId(order.get("id"));
@@ -112,15 +112,22 @@ public class PaymentServiceImpl implements PaymentService {
             response.setOrderId(request.getOrderId());
             response.setStatus(PaymentStatus.PENDING);
             response.setRazorpayOrderId(order.get("id"));
-            response.setAmount(String.valueOf(amountInPaise));
+            response.setTotalAmount(String.valueOf(amountInPaise));
 
             return response;
 
         } catch (Exception e) {
-            kafkaTemplate.send(
-                    "payment-failed-topic",
-                    String.valueOf(request.getOrderId())
-            );
+            PaymentNotificationDTO notification = new PaymentNotificationDTO();
+            notification.setOrderId(request.getOrderId());
+            notification.setStatus("FAILED");
+            notification.setReason("Payment initiation failed");
+            notification.setEmail(SecurityUtils.getCurrentEmail());
+            try {
+                String payload = new ObjectMapper().writeValueAsString(notification);
+                kafkaTemplate.send("payment-failed-topic", payload);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             throw new RuntimeException("Razorpay payment initiation failed: " + e.getMessage());
 
         }
@@ -178,10 +185,21 @@ public class PaymentServiceImpl implements PaymentService {
 
             return response;
         } catch (Exception e) {
-            kafkaTemplate.send(
-                    "payment-failed-topic",
-                    request.getRazorpayOrderId()
-            );
+            PaymentNotificationDTO notification = new PaymentNotificationDTO();
+            // Best effort to find orderId
+            repository.findByRazorpayOrderId(request.getRazorpayOrderId()).ifPresent(p -> {
+                notification.setOrderId(p.getOrderId());
+                notification.setEmail(SecurityUtils.getCurrentEmail());
+            });
+            notification.setStatus("FAILED");
+            notification.setReason("Payment Verification Failed: " + e.getMessage());
+
+            try {
+                String payload = new ObjectMapper().writeValueAsString(notification);
+                kafkaTemplate.send("payment-failed-topic", payload);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             throw new RuntimeException("Failed to verify payment: " + e.getMessage());
         }
     }

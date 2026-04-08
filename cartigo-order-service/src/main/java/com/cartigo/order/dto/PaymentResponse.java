@@ -1,12 +1,14 @@
 package com.cartigo.order.dto;
 
+import java.math.BigDecimal;
+
 public class PaymentResponse {
 
     private Long orderId;
 
     private String status;
-
-    private String stripePaymentIntentId;
+    private BigDecimal totalAmount;
+    private String razorpayOrderId;
     private String clientSecret;
 
     // getters setters
@@ -27,12 +29,20 @@ public class PaymentResponse {
         this.status = status;
     }
 
-    public String getStripePaymentIntentId() {
-        return stripePaymentIntentId;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setStripePaymentIntentId(String stripePaymentIntentId) {
-        this.stripePaymentIntentId = stripePaymentIntentId;
+    public void setAmount(BigDecimal amount) {
+        this.totalAmount = amount;
+    }
+
+    public String getRazorpayOrderId() {
+        return razorpayOrderId;
+    }
+
+    public void setRazorpayOrderId(String razorpayOrderId) {
+        this.razorpayOrderId = razorpayOrderId;
     }
 
     public String getClientSecret() {

@@ -18,7 +18,7 @@ public class Payment {
 
     private Long userId;
 
-    private BigDecimal amount;
+    private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
@@ -65,12 +65,12 @@ public class Payment {
         this.userId = userId;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public PaymentMethod getPaymentMethod() {

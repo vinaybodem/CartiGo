@@ -1,11 +1,13 @@
 package com.cartigo.order.client;
 
+import com.cartigo.order.dto.AddToCartRequest;
 import com.cartigo.order.dto.CartResponse;
 import com.cartigo.order.dto.CheckoutValidationResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "CART-SERVICE",configuration = FeignConfig.class)
 public interface CartClient {
@@ -15,6 +17,9 @@ public interface CartClient {
 
     @GetMapping("/api/cart/get")
     CartResponse getCart();
+
+    @PostMapping("/api/cart/add/items")
+    CartResponse addItem(@RequestBody AddToCartRequest req);
 
     @DeleteMapping("/api/cart/clear")
     void clearCart();
