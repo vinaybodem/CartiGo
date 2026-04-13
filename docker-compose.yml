@@ -20,7 +20,7 @@ services:
 
       # listeners
       KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
 
       # protocol mapping
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
@@ -262,7 +262,6 @@ services:
 
 
   notification-service:
-    profiles: ["optional"]
     build:
       context: .
       dockerfile: Dockerfile
