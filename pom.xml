@@ -37,24 +37,13 @@
 		<module>cartigo-auth-service</module>
 		<module>cartigo-user-service</module>
 		<module>cartigo-product-service</module>
-<!--		<module>cartigo-inventory-service</module>-->
 		<module>cartigo-inventory-service</module>
 		<module>cartigo-cart-service</module>
 		<module>cartigo-order-service</module>
 		<module>cartigo-payment-service</module>
-		<module>cartigo-review-service</module>
-		<module>cartigo-return-refund-service</module>
-
-		<!-- Optional: keep only if actually implemented with Elasticsearch -->
-		<!-- <module>cartigo-search-service</module> -->
-
-		<!-- Optional advanced: not needed for simple ecommerce -->
-		<!-- <module>cartigo-admin-service</module> -->
-<!--		<module>cartigo-reporting-analytics-service</module>-->
 		 <module>cartigo-notification-service</module>
 		<module>cartigo-category-service</module>
         <module>monitoring-service</module>
-		<!-- <module>cartigo-audit-logging-service</module> -->
 	</modules>
 
 	<dependencyManagement>

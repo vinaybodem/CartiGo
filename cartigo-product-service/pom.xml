@@ -14,11 +14,6 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-<!--	<groupId>com.cartigo</groupId>-->
-<!--	<artifactId>ProductService</artifactId>-->
-<!--	<version>0.0.1-SNAPSHOT</version>-->
-<!--	<name>ProductService</name>-->
-<!--	<description>Demo project for Spring Boot</description>-->
 
 	<artifactId>cartigo-product-service</artifactId>
 	<name>cartigo-product-service</name>
@@ -67,7 +62,10 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
-
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-micrometer</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>

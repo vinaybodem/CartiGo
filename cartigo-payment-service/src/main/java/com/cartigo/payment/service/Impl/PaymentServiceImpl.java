@@ -86,7 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         /*
         ---------------------------------------
-        CASE 2 : ONLINE PAYMENT (STRIPE)
+        CASE 2 : ONLINE PAYMENT
         ---------------------------------------
          */
         try {
