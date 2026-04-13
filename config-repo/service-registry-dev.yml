@@ -1,15 +1,21 @@
 server:
   port: 8761
-
+spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:9090
 eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
-#  server:
-#    enable-self-preservation: true
+
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,env,metrics,loggers
+  endpoint:
+    health:
+      show-details: always

@@ -20,14 +20,12 @@ spring:
 jwt:
   secret: "change-me-to-a-long-secret-change-me-to-a-long-secret"
 razorpay:
-  key-id: ${RAZORPAY_KEY_ID:rzp_test_SaCFe54BepiPGe}
-  key-secret: ${RAZORPAY_KEY_SECRET:hiRi6uXEfHkdUhpGgVJ8tE0M}
+  key-id: ${RAZORPAY_KEY_ID}
+  key-secret: ${RAZORPAY_KEY_SECRET}
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
   instance:
-#    hostname: localhost
-#    ip-address: 127.0.0.1
     prefer-ip-address: true

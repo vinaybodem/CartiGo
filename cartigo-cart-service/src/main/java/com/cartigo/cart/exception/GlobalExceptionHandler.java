@@ -1,5 +1,6 @@
 package com.cartigo.cart.exception;
 
+import com.cartigo.cart.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -40,5 +41,12 @@ public class GlobalExceptionHandler {
                 "errors", errors,
                 "status", 400
         ));
+    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Object>> handleGeneric(Exception ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.fail(ex.getMessage()));
     }
 }

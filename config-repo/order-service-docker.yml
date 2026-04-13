@@ -1,17 +1,53 @@
 server:
-  port: 9005
+  port: 8088
 
 spring:
   application:
     name: order-service
+
   datasource:
-    url: jdbc:mysql://mysql:3306/cartigo_order?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://mysql:3306/cartigo_orders_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
 
+  kafka:
+    bootstrap-servers: kafka:9092   # ⚠️ changed from localhost → kafka (docker service name)
+    consumer:
+      group-id: order-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-registry:8761/eureka   # ⚠️ docker service name
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: "change-me-to-a-long-secret-change-me-to-a-long-secret"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+    export:
+      enabled: true
+      zipkin:
+        enabled: true
+        endpoint: http://zipkin:9411/api/v2/spans   # ⚠️ docker service name

@@ -1,4 +1,9 @@
 services:
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
   kafka:
     image: apache/kafka:latest
     container_name: kafka
@@ -60,6 +65,8 @@ services:
       args:
         SERVICE: cartigo-config-server
     container_name: cartigo-config-server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
     volumes:
       - ./config-repo:/config-repo:ro
     ports:
@@ -275,6 +282,62 @@ services:
         condition: service_healthy
       service-registry:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-order-service
+    container_name: cartigo-order-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8088:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+  payment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: cartigo-payment-service
+    container_name: cartigo-payment-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+    ports:
+      - "8089:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 10s
@@ -297,40 +360,23 @@ services:
     depends_on:
         service-registry:
           condition: service_healthy
-#  order-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-order-service
-#    container_name: cartigo-order-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9005:9005"
-#    depends_on:
-#      - mysql
-#      - service-registry
-#
-#  payment-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-payment-service
-#    container_name: cartigo-payment-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#      RAZORPAY_KEY_ID: ""
-#      RAZORPAY_KEY_SECRET: ""
-#      RAZORPAY_WEBHOOK_SECRET: ""
-#    ports:
-#      - "9006:9006"
-#    depends_on:
-#      - mysql
-#      - service-registry
+
+  monitoring-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: monitoring-service
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      config-server:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy
+
 #
 #  review-service:
 #    build:

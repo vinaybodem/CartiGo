@@ -1,5 +1,10 @@
 server:
   port: 8761
+spring:
+  boot:
+    admin:
+      client:
+        url: http://monitoring-service:9090
 eureka:
   client:
     register-with-eureka: false
@@ -8,4 +13,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics,env,loggers
+  endpoint:
+    health:
+      show-details: always
