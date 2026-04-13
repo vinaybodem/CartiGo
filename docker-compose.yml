@@ -182,7 +182,7 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-  cartigo-service:
+  cartegory-service:
     build:
       context: .
       dockerfile: Dockerfile
