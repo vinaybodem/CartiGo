@@ -1,0 +1,11 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://service-registry:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+server:
+  port: 9090

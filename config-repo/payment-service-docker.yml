@@ -1,17 +1,40 @@
 server:
-  port: 9006
+  port: 8089
 
 spring:
   application:
     name: payment-service
+
   datasource:
     url: jdbc:mysql://mysql:3306/cartigo_payment?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: root123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
-razorpay:\n  keyId: "${RAZORPAY_KEY_ID:}"\n  keySecret: "${RAZORPAY_KEY_SECRET:}"\n  webhookSecret: "${RAZORPAY_WEBHOOK_SECRET:}"
+
+  kafka:
+    bootstrap-servers: kafka:9092   # ✅ docker service name
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+jwt:
+  secret: "change-me-to-a-long-secret-change-me-to-a-long-secret"
+
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID}
+  key-secret: ${RAZORPAY_KEY_SECRET}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-registry:8761/eureka   # ✅ docker service name
+  instance:
+    prefer-ip-address: true
