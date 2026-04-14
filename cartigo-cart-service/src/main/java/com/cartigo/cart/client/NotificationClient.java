@@ -1,10 +1,11 @@
 package com.cartigo.cart.client;
 
+import com.cartigo.cart.client.fallback.NotificationClientFallback;
 import com.cartigo.cart.dto.NotificationRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "NOTIFICATION-SERVICE")
+@FeignClient(name = "NOTIFICATION-SERVICE",fallback = NotificationClientFallback.class)
 public interface NotificationClient {
 
     @PostMapping("/api/notification/email")

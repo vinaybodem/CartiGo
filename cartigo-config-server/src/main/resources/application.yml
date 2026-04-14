@@ -2,5 +2,5 @@ spring:
   application:
     name: config-server
   profiles:
-    active: dev,native
+    active: dev
 

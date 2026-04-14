@@ -1,5 +1,6 @@
 package com.cartigo.order.client;
 
+import com.cartigo.order.client.fallback.CartClientFallback;
 import com.cartigo.order.dto.AddToCartRequest;
 import com.cartigo.order.dto.CartResponse;
 import com.cartigo.order.dto.CheckoutValidationResponse;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "CART-SERVICE",configuration = FeignConfig.class)
+@FeignClient(name = "CART-SERVICE",configuration = FeignConfig.class,fallback = CartClientFallback.class)
 public interface CartClient {
 
     @PostMapping("/api/cart/order/checkout/validate")

@@ -5,8 +5,8 @@ spring:
   cloud:
     config:
       server:
-        native:
-          search-locations: file:///D:/CartiGo/CartiGo/config-repo
+        git:
+          uri: https://github.com/Suhelbashakalaigiri/cartigo-config
 management:
   endpoints:
     web:
