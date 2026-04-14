@@ -64,6 +64,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-config-server
+    image: suhelbasha7324/cartigo-config-server:latest
     container_name: cartigo-config-server
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -87,6 +88,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-service-registry
+    image: suhelbasha7324/cartigo-service-registry:latest
     container_name: cartigo-service-registry
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -111,6 +113,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-auth-service
+    image: suhelbasha7324/cartigo-auth-service:latest
     container_name: cartigo-auth-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -139,6 +142,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-user-service
+    image: suhelbasha7324/cartigo-user-service:latest
     container_name: cartigo-user-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -164,6 +168,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-product-service
+    image: suhelbasha7324/cartigo-product-service:latest
     container_name: cartigo-product-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -188,6 +193,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-category-service
+    image: suhelbasha7324/cartigo-category-service:latest
     container_name: cartigo-category-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -213,6 +219,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-inventory-service
+    image: suhelbasha7324/cartigo-inventory-service:latest
     container_name: cartigo-inventory-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -239,6 +246,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-cart-service
+    image: suhelbasha7324/cartigo-cart-service:latest
     container_name: cartigo-cart-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -267,6 +275,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-notification-service
+    image: suhelbasha7324/cartigo-notification-service:latest
     container_name: cartigo-notification-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -295,6 +304,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-order-service
+    image: suhelbasha7324/cartigo-order-service:latest
     container_name: cartigo-order-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -321,6 +331,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-payment-service
+    image: suhelbasha7324/cartigo-payment-service:latest
     container_name: cartigo-payment-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -351,6 +362,7 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: cartigo-api-gateway
+    image: suhelbasha7324/cartigo-api-gateway:latest
     container_name: cartigo-api-gateway
     environment:
         SPRING_PROFILES_ACTIVE: docker
@@ -366,6 +378,8 @@ services:
       dockerfile: Dockerfile
       args:
         SERVICE: monitoring-service
+    image: suhelbasha7324/cartigo-monitoring-service:latest
+    container_name: cartigo-monitoring-service
     ports:
       - "9090:9090"
     environment:
@@ -375,39 +389,6 @@ services:
         condition: service_healthy
       service-registry:
         condition: service_healthy
-
-#
-#  review-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-review-service
-#    container_name: cartigo-review-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9007:9007"
-#    depends_on:
-#      - mysql
-#      - service-registry
-#
-#  return-refund-service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#      args:
-#        SERVICE: cartigo-return-refund-service
-#    container_name: cartigo-return-refund-service
-#    environment:
-#      SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-#      SPRING_PROFILES_ACTIVE: docker
-#    ports:
-#      - "9008:9008"
-#    depends_on:
-#      - mysql
-#      - service-registry
 
 
 

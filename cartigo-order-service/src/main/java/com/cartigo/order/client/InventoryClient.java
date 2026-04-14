@@ -1,11 +1,12 @@
 package com.cartigo.order.client;
 
+import com.cartigo.order.client.fallback.InventoryClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import org.springframework.web.bind.annotation.*;
-
-@FeignClient(name = "INVENTORY-SERVICE",configuration = FeignConfig.class)
+@FeignClient(name = "INVENTORY-SERVICE",configuration = FeignConfig.class,fallback = InventoryClientFallback.class)
 public interface InventoryClient {
 
     @PostMapping("/api/inventory/{productId}/reserve")
